@@ -71,7 +71,7 @@ class Stock < ActiveRecord::Base
 			Stock.create(
 				ticker: stock_hash["symbol"],
 				name: stock_hash["Name"],
-				last_price: ["LastTradePriceOnly"].to_i*100)
+				last_price: stock_hash["LastTradePriceOnly"].to_i*100)
 		else
 			stock.update(
 				ticker: stock_hash["symbol"],
