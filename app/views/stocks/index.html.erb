@@ -1,14 +1,15 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Listing Stocks</h1>
-
 <table>
   <thead>
     <tr>
-      <th colspan="3"></th>
-      <th colspan="3"></th>
-      <th colspan="3"></th>
-      <th colspan="3"></th>
+      <th >Ticker</th>
+      <th >Name</th>
+      <th >Last Trade</th>
+      <th >Last Price</th>
+      <th >20-day average</th>
+      <th >50-day average</th>
     </tr>
   </thead>
 
@@ -17,8 +18,10 @@
       <tr>
         <td><%= stock.ticker %></td>
         <td><%= stock.name %></td>
-        <td><%= stock.last_price %></td>
-        <td><%= stock.last_trade %></td>
+        <td><%= if stock.last_trade.nil? then "n/a" else stock.last_trade end%></td>
+        <td><%= to_price(stock.last_price) %></td>
+        <td><%= @moving_day_avg[:"#{stock.ticker}"][0] %></td>
+        <td><%= @moving_day_avg[:"#{stock.ticker}"][1] %></td>
       </tr>
     <% end %>
   </tbody>

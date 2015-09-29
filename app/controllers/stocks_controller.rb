@@ -5,6 +5,7 @@ class StocksController < ApplicationController
   # GET /stocks.json
   def index
     @stocks = Stock.all
+    @moving_day_avg = Stock.moving_day_avg(@stocks)
   end
 
   # GET /stocks/1
