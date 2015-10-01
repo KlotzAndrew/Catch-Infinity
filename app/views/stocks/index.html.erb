@@ -26,5 +26,11 @@
     <% end %>
   </tbody>
 </table>
+<%= line_chart [
+  {name: "Series A", data: @moving_day_avg[:YHOO][0]},
+  {name: "Series B", data: @moving_day_avg[:YHOO][1]}
+] %>
 
+<%=   @moving_day_avg[:YHOO][0].map {|x| x.last.round(2)} %>
 <br>
+<%=   @moving_day_avg[:YHOO][1].map {|x| x.last.round(2)} %>

@@ -2,7 +2,7 @@ class Stock < ActiveRecord::Base
 
 	def self.today_prices
 		url = 'https://query.yahooapis.com/v1/public/yql?q='
-		url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN ('YHOO','AAPL','GOOG','MSFT')")
+		url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN ('ZZZ.TO','RSY.V')")
 		url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 		data = open(url, {:read_timeout=>3}).read
 		parse_today_data(data)
@@ -39,7 +39,11 @@ class Stock < ActiveRecord::Base
 
 	def self.calc_avg(hist, days)
 		Rails.logger.info "hist2: #{hist}"
-		hist[hist.count-days..hist.count-1].sum{|x| x.price}/100.00/(days/1.00)
+		std_arr = []
+		hist_p  = hist[hist.count-days..hist.count-1].map {|x| x.price}
+		0.upto(hist_p.count-1) {|x| std_arr << [(hist_p.count+1-x).days.ago, (hist_p[0..x].sum/100.00)/(x+1)]}
+		# hist[hist.count-days..hist.count-1].sum{|x| x.price}/100.00/(days/1.00)
+		return std_arr[std_arr.count-20..std_arr.count-1]
 	end
 
 	def self.parse_historical_data(data)
