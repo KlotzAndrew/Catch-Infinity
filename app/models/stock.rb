@@ -9,10 +9,10 @@ class Stock < ActiveRecord::Base
 	end
 
 	def self.get_history
-		url = 'https://query.yahooapis.com/v1/public/yql?q='
-		url += URI.encode('select * from yahoo.finance.historicaldata where symbol = "YHOO" and startDate = "2015-06-01" and endDate = "2015-09-29"')
-		url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-		data = open(url, {:read_timeout=>3}).read
+url = 'https://query.yahooapis.com/v1/public/yql?q='
+url += URI.encode('select * from yahoo.finance.historicaldata where symbol = "YHOO" and startDate = "2015-07-02" and endDate = "2015-10-02"')
+url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
+data = open(url, {:read_timeout=>3}).read
 		parse_historical_data(data)
 	end
 
