@@ -1,4 +1,4 @@
-module Sortinghat
+module YahooFinance
 	extend ActiveSupport::Concern
 
 	def self.update_history(base_time = 3.months.ago)
@@ -11,5 +11,9 @@ module Sortinghat
 		url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
 		data = open(url, {:read_timeout=>3}).read
 				parse_historical_data(data)
+	end
+
+	def self.test_1
+		puts "test_1"
 	end
 end
