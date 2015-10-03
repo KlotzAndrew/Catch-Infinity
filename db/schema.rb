@@ -32,9 +32,9 @@ ActiveRecord::Schema.define(version: 20151002033720) do
 
   create_table "tsxto_tickers", force: :cascade do |t|
     t.datetime "record_date", null: false
-    t.decimal  ":AAB_TO"
-    t.decimal  ":AAV_TO"
-    t.decimal  ":ABT_TO"
+    t.decimal  "AAB_TO"
+    t.decimal  "AAV_TO"
+    t.decimal  "ABT_TO"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
