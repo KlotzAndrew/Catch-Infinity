@@ -16,14 +16,6 @@ class Stock < ActiveRecord::Base
 		parse_today_data(data)
 	end
 
-	# def self.get_history
-	# 	url = 'https://query.yahooapis.com/v1/public/yql?q='
-	# 	url += URI.encode('select * from yahoo.finance.historicaldata where symbol = "YHOO" and startDate = "2015-07-02" and endDate = "2015-10-02"')
-	# 	url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-	# 	data = open(url, {:read_timeout=>3}).read
-	# 	parse_historical_data(data)
-	# end
-
 	def self.moving_day_avg(stocks)
 		moving_averages = {}
 		stocks.each do |stock|
@@ -53,22 +45,6 @@ class Stock < ActiveRecord::Base
 		# hist[hist.count-days..hist.count-1].sum{|x| x.price}/100.00/(days/1.00)
 		return std_arr[std_arr.count-20..std_arr.count-1]
 	end
-
-	# def self.parse_historical_data(data)
-	# 	data = JSON.parse(data)
-	# 	data["query"]["results"]["quote"].each do |stock_hash|
-	# 		date_raw = stock_hash["Date"]
-	# 		Rails.logger.info "date_raw: date_raw"
-	# 		date = (date_raw[0..3] + date_raw[5..6] + date_raw[8..9]).to_i
-	# 		history = HistoricalPrice.where(ticker: stock_hash["Symbol"]).where(date: date).first
-	# 		if history.nil?
-	# 			HistoricalPrice.create(
-	# 				ticker: stock_hash["Symbol"],
-	# 				date: date,
-	# 				price: stock_hash["Close"].to_i*100)
-	# 		end
-	# 	end
-	# end
 
 	def self.parse_today_data(data)
 		data = JSON.parse(data)

@@ -13,8 +13,6 @@ class TsxtoTicker < ActiveRecord::Base
 			data = open(url, {:read_timeout=>3}).read
 			save_history(data)
 		end
-		# stock = "AAB.TO"
-		# parse_historical_data(data)
 	end
 
 	def self.all_tickers
@@ -23,21 +21,19 @@ class TsxtoTicker < ActiveRecord::Base
 		ticker_hash.map {|key, value| key.gsub('_', '.')}
 	end
 
-	def self.h1
-		puts self.new.inspect
-	end
-
 	private
 
 	def self.save_history(data)
 		data = JSON.parse(data)
-		data["query"]["results"]["quote"].each do |days_info|
-			date_ymd = days_info["Date"].split('-').map {|x| x.to_i}
-			date = DateTime.new(date_ymd[0],date_ymd[1],date_ymd[2])
-			table_record = get_table_record(date)
-			stock = days_info["Symbol"].gsub('.', '_')
-			if table_record[stock].nil?
-				table_record.update(stock.to_sym => days_info["High"].to_f)
+		ActiveRecord::Base.transaction do
+			data["query"]["results"]["quote"].each do |days_info|
+				date_ymd = days_info["Date"].split('-').map {|x| x.to_i}
+				date = DateTime.new(date_ymd[0],date_ymd[1],date_ymd[2])
+				table_record = get_table_record(date)
+				stock = days_info["Symbol"].gsub('.', '_')
+				if table_record[stock].nil?
+					table_record.update(stock.to_sym => days_info["High"].to_f)
+				end
 			end
 		end
 	end
