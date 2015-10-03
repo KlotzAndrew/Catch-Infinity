@@ -15,10 +15,43 @@ class TsxtoTicker < ActiveRecord::Base
 		end
 	end
 
-	def self.all_tickers
+	def self.all_tickers(yahoo_format = true)
 		remove_these = %w{ id record_date created_at updated_at }
 		ticker_hash = self.new.attributes.reject {|key| remove_these.include?(key)}
 		ticker_hash.map {|key, value| key.gsub('_', '.')}
+	end
+
+	def self.only_upward_trends
+		ticker_hash = {}
+		last_50_days = self.order(record_date: :desc)[0..49]
+		dates = last_50_days[0..19].map {|x| x.record_date}
+		all_tickers.map {|key| key.gsub('.', '_')}.each do |ticker|
+			#pull ticker prices into array of 50
+			all_50_day_prices = []
+			0.upto(last_50_days.count-1) do |day| 
+				if last_50_days[day][ticker].nil?
+					all_50_day_prices << 0 #this is bad
+				else
+					all_50_day_prices << last_50_days[day][ticker]
+				end
+			end
+			all_avg_50 = []
+			0.upto(49) {|x| all_avg_50 << (all_50_day_prices.reverse[0..x].sum)/(x+1)}
+			all_avg_20 = []
+			0.upto(19) {|x| all_avg_20 << (all_50_day_prices[0..19].reverse[0..x].sum)/(x+1)}
+
+			# raw_prices = {raw_prices: all_50_day_prices}
+			# avg_50_days = {avg_50_days: all_avg_50}
+			# avg_20_days = {avg_20_days: all_avg_20}
+
+
+			ticker_hash.merge!({ticker => {
+				raw_prices: all_50_day_prices[0..19],
+				avg_50_days: all_avg_50[0..19],
+				avg_20_days: all_avg_20 }
+			})
+		end
+		return {dates: dates, values: ticker_hash}
 	end
 
 	private

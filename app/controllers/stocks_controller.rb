@@ -4,8 +4,9 @@ class StocksController < ApplicationController
   # GET /stocks
   # GET /stocks.json
   def index
-    @stocks = Stock.all
-    @moving_day_avg = Stock.moving_day_avg(@stocks)
+    @stocks_history = TsxtoTicker.only_upward_trends
+    # @stocks = Stock.all
+    # @moving_day_avg = Stock.moving_day_avg(@stocks)
   end
 
   # GET /stocks/1

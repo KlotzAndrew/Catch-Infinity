@@ -5,32 +5,26 @@
   <thead>
     <tr>
       <th >Ticker</th>
-      <th >Name</th>
-      <th >Last Trade</th>
-      <th >Last Price</th>
-      <th >20-day average</th>
-      <th >50-day average</th>
+      <th >Values</th>
     </tr>
   </thead>
 
   <tbody>
-    <% @stocks.each do |stock| %>
+    <% @stocks_history[:values].each do |x| %>
       <tr>
-        <td><%= stock.ticker %></td>
-        <td><%= stock.name %></td>
-        <td><%= if stock.last_trade.nil? then "n/a" else stock.last_trade end%></td>
-        <td><%= to_price(stock.last_price) %></td>
-        <td><%= @moving_day_avg[:"#{stock.ticker}"][0] %></td>
-        <td><%= @moving_day_avg[:"#{stock.ticker}"][1] %></td>
+        <td><%= x.first %></td>
+        <td>
+          Raw Price: <%= x.last[:raw_prices].map {|x| x.to_f.round(2)} %>
+        </br>
+          50 Days: <%= x.last[:avg_50_days].map {|x| x.to_f.round(2)} %>
+        </br>
+          20 Days: <%= x.last[:avg_20_days].map {|x| x.to_f.round(2)} %>
+        </br>
+
+        <%= line_chart [
+          {name: "Series A", data: @moving_day_avg[:YHOO][0]} %>
+        </td>
       </tr>
     <% end %>
   </tbody>
 </table>
-<%= line_chart [
-  {name: "Series A", data: @moving_day_avg[:YHOO][0]},
-  {name: "Series B", data: @moving_day_avg[:YHOO][1]}
-] %>
-
-<%=   @moving_day_avg[:YHOO][0].map {|x| x.last.round(2)} %>
-<br>
-<%=   @moving_day_avg[:YHOO][1].map {|x| x.last.round(2)} %>
