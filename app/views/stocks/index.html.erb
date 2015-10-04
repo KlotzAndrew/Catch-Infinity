@@ -21,8 +21,11 @@
           20 Days: <%= x.last[:avg_20_days].map {|x| x.to_f.round(2)} %>
         </br>
 
+        <%= line_chart({name: "Series A", data: [Time.now, 7]) } %>
         <%= line_chart [
-          {name: "Series A", data: @moving_day_avg[:YHOO][0]} %>
+{name: "Series A", data: chartkick_format(@stocks_history[:dates], x[:raw_prices] )} %>
+
+
         </td>
       </tr>
     <% end %>

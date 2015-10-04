@@ -6,4 +6,10 @@ module StocksHelper
 	def to_price(price)
 		return '%.2f' % (price.to_f/100)
 	end
+
+	def chartkick_format(date, values)
+		formatted = []
+		0.upto(date.count-1) {|x| formatted << [date[x], values[x]]}
+		return formatted
+	end
 end
