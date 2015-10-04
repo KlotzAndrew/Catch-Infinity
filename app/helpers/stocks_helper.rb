@@ -8,8 +8,8 @@ module StocksHelper
 	end
 
 	def chartkick_format(date, values)
-		formatted = []
-		0.upto(date.count-1) {|x| formatted << [date[x], values[x]]}
+		formatted = {}
+		0.upto(date.count-1) {|x| formatted.merge!(date[x] => values[x])}
 		return formatted
 	end
 end

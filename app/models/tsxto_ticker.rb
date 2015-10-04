@@ -18,7 +18,8 @@ class TsxtoTicker < ActiveRecord::Base
 	def self.all_tickers(yahoo_format = true)
 		remove_these = %w{ id record_date created_at updated_at }
 		ticker_hash = self.new.attributes.reject {|key| remove_these.include?(key)}
-		ticker_hash.map {|key, value| key.gsub('_', '.')}
+		tickers = ticker_hash.map {|key, value| key.gsub('_', '.')}
+		tickers[0..4]
 	end
 
 	def self.only_upward_trends
