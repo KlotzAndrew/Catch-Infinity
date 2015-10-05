@@ -15,18 +15,23 @@ class TsxtoTicker < ActiveRecord::Base
 		end
 	end
 
+	def self.fetch_today
+		api_batches = all_tickers.each_slice(400).to_a
+		api_batches.each {|x| Stock.update_current_price(x)}
+	end
+
+
 	def self.all_tickers
 		#has to return yahoo formatted tickers
 		hide_these = %w{ id record_date created_at updated_at }
 		ticker_hash = self.new.attributes.reject {|key| hide_these.include?(key)}
 		tickers = ticker_hash.map {|key, value| key.gsub('_', '.')}
-		# tickers[3..3]
+		# return tickers[450..452]
 	end
 
 	def self.only_upward_trends
 		last_50_days = self.order(record_date: :desc)[0..49].reverse
 		ticker_hash = build_running_averages(last_50_days)
-		Rails.logger.info "ticker_hash: #{ticker_hash}"
 		return ticker_hash
 	end
 
@@ -45,12 +50,15 @@ class TsxtoTicker < ActiveRecord::Base
 			all_avg_20 = []
 			0.upto(prices_20.count-1) {|x| all_avg_20 << (prices_20[0..x].sum)/(x+1)}
 
+			current_stock = Stock.where(ticker: ticker.gsub('_', '.')).first
 			if prices_20.last > all_avg_50.last && prices_20.last > all_avg_20.last
 				ticker_hash.merge!(ticker.to_sym => {
 					raw_prices: prices_20,
 					avg_50_days: all_avg_50[all_avg_50.count-20..all_avg_50.count-1],
 					avg_20_days: all_avg_20,
-					dates:  dates[dates.count-20..dates.count-1]}
+					dates:  dates[dates.count-20..dates.count-1],
+					current_value: current_stock
+				}
 				)
 			end
 		end
