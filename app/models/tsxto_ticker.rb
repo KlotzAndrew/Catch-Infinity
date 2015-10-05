@@ -15,47 +15,47 @@ class TsxtoTicker < ActiveRecord::Base
 		end
 	end
 
-	def self.all_tickers(yahoo_format = true)
-		remove_these = %w{ id record_date created_at updated_at }
-		ticker_hash = self.new.attributes.reject {|key| remove_these.include?(key)}
+	def self.all_tickers
+		#has to return yahoo formatted tickers
+		hide_these = %w{ id record_date created_at updated_at }
+		ticker_hash = self.new.attributes.reject {|key| hide_these.include?(key)}
 		tickers = ticker_hash.map {|key, value| key.gsub('_', '.')}
-		tickers[0..4]
+		# tickers[3..3]
 	end
 
 	def self.only_upward_trends
-		ticker_hash = {}
-		last_50_days = self.order(record_date: :desc)[0..49]
-		dates = last_50_days[0..19].map {|x| x.record_date}
-		all_tickers.map {|key| key.gsub('.', '_')}.each do |ticker|
-			#pull ticker prices into array of 50
-			all_50_day_prices = []
-			0.upto(last_50_days.count-1) do |day| 
-				if last_50_days[day][ticker].nil?
-					all_50_day_prices << 0 #this is bad
-				else
-					all_50_day_prices << last_50_days[day][ticker]
-				end
-			end
-			all_avg_50 = []
-			0.upto(49) {|x| all_avg_50 << (all_50_day_prices.reverse[0..x].sum)/(x+1)}
-			all_avg_20 = []
-			0.upto(19) {|x| all_avg_20 << (all_50_day_prices[0..19].reverse[0..x].sum)/(x+1)}
-
-			# raw_prices = {raw_prices: all_50_day_prices}
-			# avg_50_days = {avg_50_days: all_avg_50}
-			# avg_20_days = {avg_20_days: all_avg_20}
-
-
-			ticker_hash.merge!({ticker => {
-				raw_prices: all_50_day_prices[0..19],
-				avg_50_days: all_avg_50[0..19],
-				avg_20_days: all_avg_20 }
-			})
-		end
-		return {dates: dates, values: ticker_hash}
+		last_50_days = self.order(record_date: :desc)[0..49].reverse
+		ticker_hash = build_running_averages(last_50_days)
+		Rails.logger.info "ticker_hash: #{ticker_hash}"
+		return ticker_hash
 	end
 
 	private
+
+	def self.build_running_averages(data_range)
+		ticker_hash = {}
+		all_tickers.map {|key| key.gsub('.', '_')}.each do |ticker|
+			valid_dates = data_range.select {|x| x if x[ticker]}
+			prices_50 = valid_dates.map {|day| day[ticker]}
+			prices_20 = prices_50[prices_50.count-20..prices_50.count-1]
+			dates = valid_dates.map {|day| day.record_date }
+
+			all_avg_50 = []
+			0.upto(prices_50.count-1) {|x| all_avg_50 << (prices_50[0..x].sum)/(x+1)}
+			all_avg_20 = []
+			0.upto(prices_20.count-1) {|x| all_avg_20 << (prices_20[0..x].sum)/(x+1)}
+
+			if prices_20.last > all_avg_50.last && prices_20.last > all_avg_20.last
+				ticker_hash.merge!(ticker.to_sym => {
+					raw_prices: prices_20,
+					avg_50_days: all_avg_50[all_avg_50.count-20..all_avg_50.count-1],
+					avg_20_days: all_avg_20,
+					dates:  dates[dates.count-20..dates.count-1]}
+				)
+			end
+		end
+		return ticker_hash
+	end
 
 	def self.save_history(data)
 		data = JSON.parse(data)

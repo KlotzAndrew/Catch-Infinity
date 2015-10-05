@@ -9,7 +9,7 @@ module StocksHelper
 
 	def chartkick_format(date, values)
 		formatted = {}
-		0.upto(date.count-1) {|x| formatted.merge!(date[x] => values[x])}
+		0.upto(date.count-1) {|x| formatted.merge!(date[x] => values[x].to_f)}
 		return formatted
 	end
 end
