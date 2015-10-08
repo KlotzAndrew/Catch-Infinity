@@ -1,4 +1,6 @@
-class TsxtoTicker < ActiveRecord::Base
+module Yahooapi
+	extend ActiveSupport::Concern
+
 	#this needs to be scalable for all tickers (either as subclass or module)
 
 	def self.fetch_history(base_time = 3.months.ago)
@@ -87,5 +89,4 @@ class TsxtoTicker < ActiveRecord::Base
 		end
 		return record
 	end
-
 end

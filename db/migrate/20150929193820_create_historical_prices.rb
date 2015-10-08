@@ -1,9 +1,9 @@
 class CreateHistoricalPrices < ActiveRecord::Migration
   def change
     create_table :historical_prices do |t|
-      t.string :ticker
-      t.integer :date
-      t.integer :price
+      t.integer :stock_id
+      t.datetime :date
+      t.decimal :price_day_close
 
       t.timestamps null: false
     end

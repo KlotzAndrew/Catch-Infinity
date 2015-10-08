@@ -1,5 +1,4 @@
 class Stock < ActiveRecord::Base
-
 	def self.today_prices
 		url = 'https://query.yahooapis.com/v1/public/yql?q='
 		url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN ('ZZZ.TO','RSY.V')")
