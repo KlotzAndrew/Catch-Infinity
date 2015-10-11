@@ -2,16 +2,18 @@ require 'test_helper'
 
 class StockTest < ActiveSupport::TestCase
   def setup
-  	@ZZZ_TO = stocks(:ZZZ_TO)
-  	@RSY_V = stocks(:RSY_V)
-  	@ECO_TO = stocks(:ECO_TO)
+  	@google = stocks(:google)
+  	@yahoo = stocks(:yahoo)
   end
 
   test 'correctly updates current stock data' do
-  	Stock.current_price
-  	assert_equal "Sleep Country", @ZZZ_TO.name
-  	assert_equal 99.99, @ZZZ_TO.last_price
-  	assert_equal Time.now, @ZZZ_TO.last_trade 
-  	assert_equal "Toronto Stack Exchange", @ZZZ_TO.stock_exchange
+    VCR.use_cassette("yahoo_finance") do
+    	Stock.current_price
+    end
+    @google.reload
+    assert_equal "Alphabet Inc.", @google.name
+    assert_equal 643.61, @google.last_price.to_f
+    assert_equal DateTime.new(2015,10,9,16), @google.last_trade 
+    assert_equal "NMS", @google.stock_exchange
   end
 end

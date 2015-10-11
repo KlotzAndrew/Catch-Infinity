@@ -4,22 +4,15 @@
 # model remove the '{}' from the fixture names and add the columns immediately
 # below each fixture, per the syntax in the comments below
 #
-ZZZ_TO:
-  ticker: "ZZZ.TO"
+google:
+  ticker: "GOOG"
   name: 
   last_price:
   last_trade:
   stock_exchange: 
 
-RSY_V:
-  ticker: "ZZZ.TO"
-  name: 
-  last_price:
-  last_trade:
-  stock_exchange: 
-
-ECO_TO:
-  ticker: "ECO_TO"
+yahoo:
+  ticker: "YHOO"
   name: 
   last_price:
   last_trade:

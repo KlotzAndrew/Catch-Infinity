@@ -8,5 +8,11 @@ class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
 
-  # Add more helper methods to be used by all tests here...
+    VCR.configure do |config|
+		config.cassette_library_dir = "fixtures/vcr_cassettes"
+		config.hook_into :webmock
+		config.default_cassette_options = {
+	        match_requests_on: [:uri],
+	    	record: :new_episodes }
+	end
 end
