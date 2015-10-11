@@ -1,40 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<h1>Listing Stocks (<%= @stocks_history.count %>/854)</h1>
-
-<% i = 1 %>
-<% @stocks_history.each do |stock| %>
-  
-    Ticker <%= i %>: <%= stock.first %>
-    <% i+=1 %>
-    </br>
-      Raw Price: <%= stock.last[:raw_prices].map {|y| y.to_f.round(2)} %> (=> <%= last_price(stock.last) %> )
-    </br>
-      50 Days: <%= stock.last[:avg_50_days].map {|y| y.to_f.round(2)} %>
-    </br>
-      20 Days: <%= stock.last[:avg_20_days].map {|y| y.to_f.round(2)} %>
-    </br>
-
-<!-- This builds google charts API options, used by chartkick w/ line_chart -->
-<% 
-  prices = stock.last[:raw_prices]
-  y_range = (prices.min.to_i)..(prices.max.to_i)
-  # start_date = stock.last[:dates].first
-
-  library_options = {
-    vAxis: {
-      viewWindow: y_range
-    }
-  }
- %>
-
-    <%= line_chart [
-      {name: "Price", data: chartkick_format(stock.last, "raw_prices")},
-      {name: "50 day moving avg", data: chartkick_format(stock.last, "avg_50_days")},
-      {name: "20 day moving avg", data: chartkick_format(stock.last, "avg_20_days")},
-    ], {library: library_options} %>
-
-    
-
+<h1>Listing Stocks </h1>
+<% @stocks.each do |stock| %>
+<%= stock.inspect %>
 <% end %>
-
