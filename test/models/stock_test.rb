@@ -9,12 +9,12 @@ class StockTest < ActiveSupport::TestCase
   test 'correctly updates current stock data' do
     VCR.use_cassette("yahoo_finance") do
     	Stock.current_price
+      @google.reload
+      assert_equal "Alphabet Inc.", @google.name
+      assert_equal 647.2, @google.last_price.to_f
+      assert_equal DateTime.new(2015,10,12,12,49), @google.last_trade 
+      assert_equal "NMS", @google.stock_exchange
     end
-    @google.reload
-    assert_equal "Alphabet Inc.", @google.name
-    assert_equal 643.61, @google.last_price.to_f
-    assert_equal DateTime.new(2015,10,9,16), @google.last_trade 
-    assert_equal "NMS", @google.stock_exchange
   end
 
   test 'correctly fetches histoical stock data' do

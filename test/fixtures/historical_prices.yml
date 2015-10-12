@@ -1,13 +1,13 @@
 <% 1.upto(50) do |x| %>
-hp_google-<%= x %>:
-  stock: google
+hp_tesla-<%= x %>:
+  stock: tesla
   date: <%= x.days.ago %>
   price_day_close: <%= x %>
 <% end %>
 
 <% 1.upto(50) do |x| %>
-hp_yahoo-<%= x %>:
-  stock: yahoo
+hp_apple-<%= x %>:
+  stock: apple
   date: <%= x.days.ago %>
   price_day_close: <%= x %>
 <% end %>

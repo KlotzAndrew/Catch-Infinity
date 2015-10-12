@@ -1,3 +1,5 @@
+require_relative '../../lib/catch_infinity/stock_quote_updater'
+
 class Stock < ActiveRecord::Base
 	has_many :HistoricalPrices
 	validates :ticker, uniqueness: true
@@ -17,7 +19,7 @@ class Stock < ActiveRecord::Base
 	end
 
 	def self.current_price
-		yahoo_api_quotes(Stock.all)
+		StockQuoteUpdater.new(Stock.all)
 	end
 
 	def self.historical_price(options = {})
@@ -29,6 +31,7 @@ class Stock < ActiveRecord::Base
 	private
 
 	def self.calculate_trends(historicalprices)
+		return nil if historicalprices.count < 50
 		chart_hash = {
 			raw_prices: chart_raw_prices(historicalprices),
 			avg_50_days: chart_day_avg(historicalprices, 50),
@@ -51,7 +54,12 @@ class Stock < ActiveRecord::Base
 		historicalprices[historicalprices.count-50..historicalprices.count-1].each do |x|
 			raw_prices_hash.merge!(x.date => x.price_day_close.to_f)
 		end
+		add_current_price(historicalprices.first.stock, raw_prices_hash)
 		return raw_prices_hash
+	end
+
+	def self.add_current_price(stock, price_hash)
+		price_hash.merge!(stock.last_trade => stock.last_price.to_f)
 	end
 
 	def self.yahoo_api_historical(stocks, query_start)
@@ -81,44 +89,5 @@ class Stock < ActiveRecord::Base
 				end
 			end
 		end
-	end
-
-	def self.yahoo_api_quotes(stocks)
-		# limit of BATCHLIMIT_QUOTES per api call
-		yahoo_tickers =  stocks.map {|x| "'" + x.ticker + "'"}.join(', ')
-		url = 'https://query.yahooapis.com/v1/public/yql?q='
-		url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{yahoo_tickers})")
-		url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-		data = open(url, {:read_timeout=>3}).read
-		parse_quote_data(data)
-	end
-
-	def self.parse_quote_data(data)
-		data = JSON.parse(data)
-		ActiveRecord::Base.transaction do
-			data["query"]["results"]["quote"].each do |stock_hash|
-				Rails.logger.info "this value? #{stock_hash}"
-				update_stock(stock_hash)
-			end
-		end
-	end
-
-	def self.update_stock(stock_hash)
-		stock = Stock.where(ticker: stock_hash["symbol"]).first
-		stock.update(
-			name: stock_hash["Name"],
-			last_price: BigDecimal.new(stock_hash["LastTradePriceOnly"]),
-			last_trade: parse_last_trade_time(stock_hash),
-			stock_exchange: stock_hash["StockExchange"])
-	end
-
-	def self.parse_last_trade_time(stock_hash)
-		wt = stock_hash["LastTradeDate"].split('/').map {|x| x.to_i}
-		dt = stock_hash["LastTradeWithTime"].split.first
-		pm = dt[dt.length-2..dt.length-1]
-		ht = dt[0..dt.length-3].split(':').map {|x| x.to_i}
-		ht[0] += 12 if pm == "pm" && ht[0] < 12
-		et = "#{wt[2]},#{wt[0]},#{wt[1]},#{ht[0]},#{ht[1]}"
-		DateTime.new(wt[2],wt[0],wt[1],ht[0],ht[1])
 	end
 end

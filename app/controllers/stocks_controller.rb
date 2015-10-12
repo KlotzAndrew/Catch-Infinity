@@ -8,6 +8,14 @@ class StocksController < ApplicationController
   def show
   end
 
+  def yahoo_api
+    puts params
+    Stock.current_price
+    respond_to do |format|
+      format.html {redirect_to root_path}
+    end
+  end
+
   private
     def set_stock
       @stock = Stock.find(params[:id])
