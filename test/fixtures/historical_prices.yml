@@ -1,0 +1,13 @@
+<% 1.upto(50) do |x| %>
+hp_google-<%= x %>:
+  stock: google
+  date: <%= x.days.ago %>
+  price_day_close: <%= x %>
+<% end %>
+
+<% 1.upto(50) do |x| %>
+hp_yahoo-<%= x %>:
+  stock: yahoo
+  date: <%= x.days.ago %>
+  price_day_close: <%= x %>
+<% end %>

@@ -25,4 +25,9 @@ module StocksHelper
 		return "last value missing" if value == 0
 		value
 	end
+
+	def chart_yrange(values_hash)
+		prices = values_hash.map {|x,y| y}
+		(prices.min.to_i)..(prices.max.to_i)
+	end
 end

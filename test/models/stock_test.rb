@@ -32,4 +32,7 @@ class StockTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'should check chart math' do
+  end
 end

@@ -3,6 +3,19 @@ class Stock < ActiveRecord::Base
 	validates :ticker, uniqueness: true
 	BATCHLIMIT_QUOTES = 400
 
+	def self.all_prices
+		index_hash = {}
+		Stock.all.each do |stock|
+			index_hash.merge!(
+				stock.ticker => {
+					stock: stock,
+					prices: calculate_trends(stock.HistoricalPrices.order(date: :asc))
+				}
+			)
+		end
+		return index_hash
+	end
+
 	def self.current_price
 		yahoo_api_quotes(Stock.all)
 	end
@@ -15,10 +28,35 @@ class Stock < ActiveRecord::Base
 
 	private
 
+	def self.calculate_trends(historicalprices)
+		chart_hash = {
+			raw_prices: chart_raw_prices(historicalprices),
+			avg_50_days: chart_day_avg(historicalprices, 50),
+			avg_20_days: chart_day_avg(historicalprices, 20)
+		}
+	end
+
+	def self.chart_day_avg(historicalprices, range)
+		avg_price_hash, moving_total, moving_count = {}, BigDecimal.new(0), BigDecimal.new(0)
+		(historicalprices.count-range).upto(historicalprices.count-1) do |x|
+			moving_total += historicalprices[x].price_day_close
+			moving_count += 1
+			avg_price_hash.merge!(historicalprices[x].date => (moving_total/moving_count).to_f)
+		end
+		return avg_price_hash
+	end
+
+	def self.chart_raw_prices(historicalprices)
+		raw_prices_hash = {}
+		historicalprices[historicalprices.count-50..historicalprices.count-1].each do |x|
+			raw_prices_hash.merge!(x.date => x.price_day_close.to_f)
+		end
+		return raw_prices_hash
+	end
+
 	def self.yahoo_api_historical(stocks, query_start)
 		query_end = Time.now.strftime("%Y-%m-%d")
 		stocks.each do |stock|
-			Rails.logger.info "stock_obj: #{stock.ticker}"
 			url = 'https://query.yahooapis.com/v1/public/yql?q='
 			url += URI.encode(%Q(select * from yahoo.finance.historicaldata where symbol = "#{stock.ticker}" and startDate = "#{query_start}" and endDate = "#{query_end}"))
 			url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='

@@ -1,6 +1,23 @@
 <p id="notice"><%= notice %></p>
 
 <h1>Listing Stocks </h1>
-<% @stocks.each do |stock| %>
-<%= stock.inspect %>
+<% @stocks.each_pair do |tick, stock| %>
+  <% 
+  library_options = {
+    vAxis: {
+      viewWindow: chart_yrange(stock[:prices][:raw_prices])
+    },
+    title: tick,
+    titleTextStyle: { color: 'black',
+                    fontName: 'Times New Roman',
+                    fontSize: 24,
+                    bold: true,
+                    italic: true }
+    } %>
+  <%= line_chart [
+    {name: "Price", data: stock[:prices][:raw_prices]},
+    {name: "50 Day Avg.", data: stock[:prices][:avg_50_days]}, 
+    {name: "20 Day Avg.", data: stock[:prices][:avg_20_days]}
+    ], library: library_options %>
+
 <% end %>
