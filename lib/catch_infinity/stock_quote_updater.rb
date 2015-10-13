@@ -1,38 +1,52 @@
 class StockQuoteUpdater
+	attr_reader :stocks
+	BATCHLIMIT_QUOTES = 400
 
 	def initialize(stocks)
-		yahoo_api_quotes(Stock.all)
+		@stocks = stocks
+	end
+
+	def fetch_latest
+		quotes = call_api
 	end
 
 	private
-	def yahoo_api_quotes(stocks)
+
+	def call_api
 		# limit of BATCHLIMIT_QUOTES per api call
-		yahoo_tickers =  stocks.map {|x| "'" + x.ticker + "'"}.join(', ')
+		yahoo_tickers =  @stocks.map {|x| "'" + x.ticker + "'"}.join(', ')
 		url = 'https://query.yahooapis.com/v1/public/yql?q='
 		url += URI.encode("SELECT * FROM yahoo.finance.quotes WHERE symbol IN (#{yahoo_tickers})")
 		url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-		data = open(url, {:read_timeout=>3}).read
-		parse_quote_data(data)
+		message = open(url, {:read_timeout=>3}).read
+		parse_quote_data(message)
 	end
 
-	def parse_quote_data(data)
-		data = JSON.parse(data)
-		ActiveRecord::Base.transaction do
-			data["query"]["results"]["quote"].each do |stock_hash|
-				Rails.logger.info "this value? #{stock_hash}"
-				update_stock(stock_hash)
-			end
+	def parse_quote_data(message)
+		data = JSON.parse(message)
+		price_hash = Hash.new(0)
+		data["query"]["results"]["quote"].each do |stock_hash|
+			price_hash[stock_hash["symbol"]] = 
+				{
+					name: stock_hash["Name"],
+					last_price: BigDecimal.new(stock_hash["LastTradePriceOnly"]),
+					last_trade: parse_last_trade_time(stock_hash),
+					stock_exchange: stock_hash["StockExchange"]
+				}
 		end
+		return price_hash
 	end
 
-	def update_stock(stock_hash)
-		stock = Stock.where(ticker: stock_hash["symbol"]).first
-		stock.update(
-			name: stock_hash["Name"],
-			last_price: BigDecimal.new(stock_hash["LastTradePriceOnly"]),
-			last_trade: parse_last_trade_time(stock_hash),
-			stock_exchange: stock_hash["StockExchange"])
-	end
+
+
+	# def update_stock(stock_hash)
+	# 	stock = Stock.where(ticker: stock_hash["symbol"]).first
+	# 	stock.update(
+	# 		name: stock_hash["Name"],
+	# 		last_price: BigDecimal.new(stock_hash["LastTradePriceOnly"]),
+	# 		last_trade: parse_last_trade_time(stock_hash),
+	# 		stock_exchange: stock_hash["StockExchange"])
+	# end
 
 	def parse_last_trade_time(stock_hash)
 		wt = stock_hash["LastTradeDate"].split('/').map {|x| x.to_i}

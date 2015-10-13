@@ -18,9 +18,27 @@ class Stock < ActiveRecord::Base
 		return index_hash
 	end
 
-	def self.current_price
-		StockQuoteUpdater.new(Stock.all)
+	def self.current_price(stocks)
+		fetcher = StockQuoteUpdater.new(stocks)
+		update_prices(fetcher.fetch_latest)
 	end
+
+	def self.update_prices(prices)
+		begin
+			Stock.transaction do
+				prices.each_pair do |ticker, values|
+					Stock.where(ticker: ticker).first.update!(
+						name: values[:name],
+						last_price: values[:last_price],
+						last_trade: values[:last_trade],
+						stock_exchange: values[:stock_exchange])
+				end
+			end
+		rescue => e
+			Rails.logger("Tell me about this exception #{e}")
+		end
+	end
+
 
 	def self.historical_price(options = {})
 		base_time = options[:start] || 3.months.ago

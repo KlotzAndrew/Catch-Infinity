@@ -7,14 +7,27 @@ class StockQuoteUpdatrTest < ActionController::TestCase
   	@yahoo = stocks(:yahoo)
   end
 
-  test 'correctly updates current stock data' do
+  test 'corrctly returns hash of quotes' do
+    # yahoo API uses differnt format for single ticker 
     VCR.use_cassette("yahoo_finance") do
-    	StockQuoteUpdater.new(Stock.all)
-      @google.reload
-      assert_equal "Alphabet Inc.", @google.name
-      assert_equal 647.2, @google.last_price.to_f
-      assert_equal DateTime.new(2015,10,12,12,49), @google.last_trade 
-      assert_equal "NMS", @google.stock_exchange
+    	fetcher = StockQuoteUpdater.new([@google, @yahoo])
+
+    	assert_equal fetcher.fetch_latest, {
+			"GOOG" => 
+			{
+				name: "Google Inc.",
+				last_price:  BigDecimal.new("646.67"),
+				last_trade: DateTime.new(2015,10,12,16,00),
+				stock_exchange: "NMS" 
+			},
+      "YHOO" => 
+      {
+        name: "Yahoo! Inc.",
+        last_price: BigDecimal.new("32.86"),
+        last_trade: DateTime.new(2015,10,12,16,00),
+        stock_exchange: "NMS" 
+      }
+		}
     end
   end
 end
