@@ -1,4 +1,5 @@
 require_relative '../../lib/catch_infinity/stock_quote_updater'
+require_relative '../../lib/catch_infinity/stock_history_fetcher'
 
 class Stock < ActiveRecord::Base
 	has_many :HistoricalPrices
@@ -18,9 +19,35 @@ class Stock < ActiveRecord::Base
 		return index_hash
 	end
 
-	def self.current_price(stocks)
-		fetcher = StockQuoteUpdater.new(stocks)
-		update_prices(fetcher.fetch_latest)
+	def self.current_price(stocks_array)
+		fetcher = StockQuoteUpdater.new(stocks_array)
+		update_prices(fetcher.fetch)
+	end
+
+	def self.past_prices(stocks_array)
+		fetcher = StockHistoryFetcher.new(stocks_array)
+		update_histories(fetcher.fetch)
+	end	
+
+	private
+	
+	def self.update_histories(prices)
+		prices.each_pair do |ticker, values|
+			save_price_points(ticker, values)
+		end
+	end
+
+	def self.save_price_points(ticker, values)
+		stock = Stock.where(ticker: ticker).first
+		values.each_pair do |date, data|
+			historicalprice = stock.HistoricalPrices.where(date: date).first
+			if historicalprice.nil?
+				HistoricalPrice.create(
+					price_day_close: data[:price_day_close],
+					date: date,
+					stock_id: stock.id)
+			end
+		end			
 	end
 
 	def self.update_prices(prices)
@@ -38,15 +65,6 @@ class Stock < ActiveRecord::Base
 			Rails.logger("Tell me about this exception #{e}")
 		end
 	end
-
-
-	def self.historical_price(options = {})
-		base_time = options[:start] || 3.months.ago
-		query_start = base_time.strftime("%Y-%m-%d")
-		yahoo_api_historical(Stock.all, query_start)
-	end
-
-	private
 
 	def self.calculate_trends(historicalprices)
 		return nil if historicalprices.count < 50
@@ -78,34 +96,5 @@ class Stock < ActiveRecord::Base
 
 	def self.add_current_price(stock, price_hash)
 		price_hash.merge!(stock.last_trade => stock.last_price.to_f)
-	end
-
-	def self.yahoo_api_historical(stocks, query_start)
-		query_end = Time.now.strftime("%Y-%m-%d")
-		stocks.each do |stock|
-			url = 'https://query.yahooapis.com/v1/public/yql?q='
-			url += URI.encode(%Q(select * from yahoo.finance.historicaldata where symbol = "#{stock.ticker}" and startDate = "#{query_start}" and endDate = "#{query_end}"))
-			url += '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback='
-			data = open(url, {:read_timeout=>3}).read
-			update_stock_history(data)
-		end
-	end
-
-	def self.update_stock_history(data)
-		data = JSON.parse(data)
-		ActiveRecord::Base.transaction do
-			data["query"]["results"]["quote"].each do |days_info|
-				date_ymd = days_info["Date"].split('-').map {|x| x.to_i}
-				date = DateTime.new(date_ymd[0],date_ymd[1],date_ymd[2])
-				stock = Stock.where(ticker: days_info["Symbol"]).first
-				historicalprice = stock.HistoricalPrices.where(date: date).first
-				if historicalprice.nil?
-					HistoricalPrice.create(
-						price_day_close: days_info["High"],
-						date: date,
-						stock_id: stock.id)
-				end
-			end
-		end
 	end
 end

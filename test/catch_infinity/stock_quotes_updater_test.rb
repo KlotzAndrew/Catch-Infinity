@@ -12,7 +12,7 @@ class StockQuoteUpdatrTest < ActionController::TestCase
     VCR.use_cassette("yahoo_finance") do
     	fetcher = StockQuoteUpdater.new([@google, @yahoo])
 
-    	assert_equal fetcher.fetch_latest, {
+    	assert_equal fetcher.fetch, {
 			"GOOG" => 
 			{
 				name: "Google Inc.",

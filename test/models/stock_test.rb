@@ -19,7 +19,7 @@ class StockTest < ActiveSupport::TestCase
 
   test 'correctly fetches histoical stock data' do
     VCR.use_cassette("yahoo_finance") do
-      Stock.historical_price
+      Stock.past_prices([@google, @yahoo])
     end
 
     Stock.all.each do |stock|

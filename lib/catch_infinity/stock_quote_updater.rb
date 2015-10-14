@@ -2,11 +2,11 @@ class StockQuoteUpdater
 	attr_reader :stocks
 	BATCHLIMIT_QUOTES = 400
 
-	def initialize(stocks)
-		@stocks = stocks
+	def initialize(stocks_array)
+		@stocks = stocks_array
 	end
 
-	def fetch_latest
+	def fetch
 		quotes = call_api
 	end
 
