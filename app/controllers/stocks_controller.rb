@@ -8,9 +8,15 @@ class StocksController < ApplicationController
   def show
   end
 
-  def yahoo_api
-    puts params
+  def current_quotes
     Stock.current_price
+    respond_to do |format|
+      format.html {redirect_to root_path}
+    end
+  end
+
+  def past_prices
+    Stock.past_prices
     respond_to do |format|
       format.html {redirect_to root_path}
     end

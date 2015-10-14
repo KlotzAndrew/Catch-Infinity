@@ -1,7 +1,8 @@
 Rails.application.routes.draw do
   root 'stocks#index'
   resources :stocks, only: [:index, :create, :update]
-  get 'yahoo_api' => 'stocks#yahoo_api'
+  get 'current_quotes' => 'stocks#current_quotes'
+  get 'past_prices' => 'stocks#past_prices'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

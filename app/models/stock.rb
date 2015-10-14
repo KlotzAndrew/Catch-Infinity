@@ -19,12 +19,12 @@ class Stock < ActiveRecord::Base
 		return index_hash
 	end
 
-	def self.current_price(stocks_array)
+	def self.current_price(stocks_array = Stock.all)
 		fetcher = StockQuoteFetcher.new(stocks_array)
 		update_prices(fetcher.fetch)
 	end
 
-	def self.past_prices(stocks_array)
+	def self.past_prices(stocks_array = Stock.all)
 		fetcher = StockHistoryFetcher.new(stocks_array)
 		update_histories(fetcher.fetch)
 	end	
