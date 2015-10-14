@@ -17,6 +17,18 @@ class StockTest < ActiveSupport::TestCase
     end
   end
 
+  test 'correctly updates current single stock data' do
+    VCR.use_cassette("yahoo_finance") do
+      Stock.current_price([@google])
+      @google.reload
+      assert_equal "Alphabet Inc.", @google.name
+      assert_equal BigDecimal.new("646.67"), @google.last_price
+      assert_equal DateTime.new(2015,10,12,16,00), @google.last_trade 
+      assert_equal "NMS", @google.stock_exchange
+    end
+  end
+
+
   test 'correctly fetches histoical stock data' do
     VCR.use_cassette("yahoo_finance") do
       Stock.past_prices([@google, @yahoo])
@@ -31,8 +43,5 @@ class StockTest < ActiveSupport::TestCase
           assert_equal hist.stock_id, stock.id
       end
     end
-  end
-
-  test 'should check chart math' do
   end
 end

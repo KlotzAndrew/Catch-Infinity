@@ -54,16 +54,33 @@ class Stock < ActiveRecord::Base
 		begin
 			Stock.transaction do
 				prices.each_pair do |ticker, values|
-					Stock.where(ticker: ticker).first.update!(
-						name: values[:name],
-						last_price: values[:last_price],
-						last_trade: values[:last_trade],
-						stock_exchange: values[:stock_exchange])
+					stock = Stock.where(ticker: ticker).first
+					if stock.nil?
+						raise "no stock found!" if values[:name].nil?
+						stock = Stock.create(
+							ticker: ticker,
+							name: values[:name],
+							last_price: values[:last_price],
+							last_trade: values[:last_trade],
+							stock_exchange: values[:stock_exchange])
+						# create_if_valid(ticker, values)
+					else
+						stock.update!(
+							name: values[:name],
+							last_price: values[:last_price],
+							last_trade: values[:last_trade],
+							stock_exchange: values[:stock_exchange])
+					end
 				end
 			end
 		rescue => e
-			Rails.logger("Tell me about this exception #{e}")
+			# Rails.logger("Tell me about this exception #{e.message}")
 		end
+	end
+
+	def create_if_valid(ticker, values)
+		puts "TICKER2: #{ticker}"
+		puts "NEWSTOCK: #{stock.inspect}"
 	end
 
 	def self.calculate_trends(historicalprices)

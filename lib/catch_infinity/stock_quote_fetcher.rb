@@ -29,20 +29,29 @@ class StockQuoteFetcher
 	def parse_quote_data(message)
 		data = JSON.parse(message)
 		price_hash = Hash.new(0)
-		data["query"]["results"]["quote"].each do |stock_hash|
+		if data["query"]["results"]["quote"].class == Hash
+			stock_hash = data["query"]["results"]["quote"]
 			combine_price_hashes(price_hash, stock_hash)
+		else
+			data["query"]["results"]["quote"].each do |stock_hash|
+				combine_price_hashes(price_hash, stock_hash)
+			end
 		end
 		return price_hash
 	end
 
 	def combine_price_hashes(price_hash, stock_hash)
-		price_hash[stock_hash["symbol"]] = 
-			{
-				name: stock_hash["Name"],
-				last_price: BigDecimal.new(stock_hash["LastTradePriceOnly"]),
-				last_trade: parse_last_trade_time(stock_hash),
-				stock_exchange: stock_hash["StockExchange"]
-			}
+		if stock_hash["Name"].nil?
+			price_hash[stock_hash["symbol"]] = {}
+		else
+			price_hash[stock_hash["symbol"]] = 
+				{
+					name: stock_hash["Name"],
+					last_price: BigDecimal.new(stock_hash["LastTradePriceOnly"]),
+					last_trade: parse_last_trade_time(stock_hash),
+					stock_exchange: stock_hash["StockExchange"]
+				}
+		end
 	end
 
 	def parse_last_trade_time(stock_hash)

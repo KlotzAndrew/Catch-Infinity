@@ -33,4 +33,23 @@ class StocksControllerTest < ActionController::TestCase
 			end
 	end
 
+	test "should create stock" do
+		assert_difference 'Stock.count', 1 do
+			VCR.use_cassette("yahoo_finance") do
+	      post :create, stock: { ticker: "FB" }
+	    end
+	  end
+	end
+
+	test "does not create stock with invalid ticker" do
+		assert_difference 'Stock.count', 0 do
+			VCR.use_cassette("yahoo_finance") do
+	      post :create, stock: { ticker: "1" }
+	    end
+	  end
+	end
+
+	test "should not create stock wihtout valid ticker" do
+	end
+
 end

@@ -8,6 +8,22 @@ class StocksController < ApplicationController
   def show
   end
 
+  def create
+    stock = Stock.new(stock_params)
+    Stock.current_price([stock])
+    # Stock.current_price
+    # respond_to do |format|
+    #   if @ticket.save
+    #     format.html { redirect_to tournament_path(@ticket.tournament.id, :active_ticket => @ticket)}
+    #     format.js
+    #   else
+    #     format.html { render :new }
+    #     format.js
+    #   end
+    # end
+    redirect_to root_path
+  end
+
   def current_quotes
     Stock.current_price
     respond_to do |format|
@@ -28,6 +44,6 @@ class StocksController < ApplicationController
     end
 
     def stock_params
-      params[:stock]
+      params.require(:stock).permit(:ticker)
     end
 end
