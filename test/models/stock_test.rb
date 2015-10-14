@@ -44,4 +44,15 @@ class StockTest < ActiveSupport::TestCase
       end
     end
   end
+
+  test 'builds stock history for new valid stocks' do
+    VCR.use_cassette("yahoo_finance") do
+      stock = Stock.new(ticker: "FB")
+      Stock.current_price([stock])
+      
+      stock = Stock.where(ticker: stock.ticker).first
+      assert_operator stock.HistoricalPrices.count, :>=,  50
+    end
+
+  end
 end

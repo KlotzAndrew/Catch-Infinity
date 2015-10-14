@@ -63,6 +63,7 @@ class Stock < ActiveRecord::Base
 							last_price: values[:last_price],
 							last_trade: values[:last_trade],
 							stock_exchange: values[:stock_exchange])
+						past_prices([stock])
 						# create_if_valid(ticker, values)
 					else
 						stock.update!(
