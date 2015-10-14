@@ -49,7 +49,4 @@ class StocksControllerTest < ActionController::TestCase
 	  end
 	end
 
-	test "should not create stock wihtout valid ticker" do
-	end
-
 end

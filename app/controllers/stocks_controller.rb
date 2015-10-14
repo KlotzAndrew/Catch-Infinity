@@ -2,6 +2,7 @@ class StocksController < ApplicationController
   before_action :set_stock, only: [:show]
 
   def index
+    @stock = Stock.new
     @stocks = Stock.all_prices
   end
 

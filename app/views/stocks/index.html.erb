@@ -1,7 +1,10 @@
 <p id="notice"><%= notice %></p>
 <h1>Listing Stocks </h1>
+
+<%= render 'form' %>
 <%= link_to "Update Current Quotes", current_quotes_path %>
 <%= link_to "Update Past Prices", past_prices_path %>
+
 <% @stocks.each_pair do |tick, stock| %>
   <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
 <% end %>
