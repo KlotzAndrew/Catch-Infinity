@@ -1,4 +1,4 @@
-require_relative '../../lib/catch_infinity/stock_quote_updater'
+require_relative '../../lib/catch_infinity/stock_quote_fetcher'
 require_relative '../../lib/catch_infinity/stock_history_fetcher'
 
 class Stock < ActiveRecord::Base
@@ -20,7 +20,7 @@ class Stock < ActiveRecord::Base
 	end
 
 	def self.current_price(stocks_array)
-		fetcher = StockQuoteUpdater.new(stocks_array)
+		fetcher = StockQuoteFetcher.new(stocks_array)
 		update_prices(fetcher.fetch)
 	end
 

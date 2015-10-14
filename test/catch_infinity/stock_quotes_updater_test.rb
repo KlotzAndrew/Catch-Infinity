@@ -1,7 +1,7 @@
 require 'test_helper'
-require_relative '../../lib/catch_infinity/stock_quote_updater'
+require_relative '../../lib/catch_infinity/stock_quote_fetcher'
 
-class StockQuoteUpdatrTest < ActionController::TestCase
+class StockQuoteFetcherTest < ActionController::TestCase
   def setup
   	@google = stocks(:google)
   	@yahoo = stocks(:yahoo)
@@ -10,7 +10,7 @@ class StockQuoteUpdatrTest < ActionController::TestCase
   test 'corrctly returns hash of quotes' do
     # yahoo API uses differnt format for single ticker 
     VCR.use_cassette("yahoo_finance") do
-    	fetcher = StockQuoteUpdater.new([@google, @yahoo])
+    	fetcher = StockQuoteFetcher.new([@google, @yahoo])
 
     	assert_equal fetcher.fetch, {
 			"GOOG" => 
