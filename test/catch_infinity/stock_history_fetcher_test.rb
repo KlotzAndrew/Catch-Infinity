@@ -13,9 +13,9 @@ class StockHistoryFetcherTest < ActionController::TestCase
   		prices = fetcher.fetch
 			assert_equal prices["GOOG"].first, 
 			[
-				DateTime.new(2015,10,13),
+				DateTime.new(2015,10,14),
 				{
-					price_day_close: BigDecimal.new("657.812012")
+					price_day_close: BigDecimal.new("659.390015")
 				}
 			]
 			assert_equal prices["GOOG"].count, 65	

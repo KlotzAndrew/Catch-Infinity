@@ -56,7 +56,7 @@ class Stock < ActiveRecord::Base
 				prices.each_pair do |ticker, values|
 					stock = Stock.where(ticker: ticker).first
 					if stock.nil?
-						raise "no stock found!" if values[:name].nil?
+						stock.errors.add(:picture, "should be less than 5MB") if values[:name].nil?
 						stock = Stock.create(
 							ticker: ticker,
 							name: values[:name],

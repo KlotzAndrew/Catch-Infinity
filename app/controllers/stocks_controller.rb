@@ -12,17 +12,16 @@ class StocksController < ApplicationController
   def create
     stock = Stock.new(stock_params)
     Stock.current_price([stock])
-    # Stock.current_price
-    # respond_to do |format|
-    #   if @ticket.save
-    #     format.html { redirect_to tournament_path(@ticket.tournament.id, :active_ticket => @ticket)}
-    #     format.js
-    #   else
-    #     format.html { render :new }
-    #     format.js
-    #   end
-    # end
-    redirect_to root_path
+
+    respond_to do |format|
+      if stock.id?
+        format.html { redirect_to root_path, notice: 'Stock was successfully saved!'}
+        format.js
+      else
+        format.html { redirect_to root_path, alert: 'Not able to save stock!' }
+        format.js
+      end
+    end
   end
 
   def current_quotes

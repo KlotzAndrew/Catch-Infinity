@@ -1,21 +1,23 @@
-<% if stock[:prices].nil? %>
-  <h2>THIS STOCK IS NIL <%= tick %></h2>
-<% else %>
-    <% 
-    library_options = {
-      vAxis: {
-        viewWindow: chart_yrange(stock[:prices][:raw_prices])
-      },
-      title: tick,
-      titleTextStyle: { color: 'black',
-                      fontName: 'Times New Roman',
-                      fontSize: 24,
-                      bold: true,
-                      italic: true }
-      } %>
-  <%= line_chart [
-    {name: "Price", data: stock[:prices][:raw_prices]},
-    {name: "50 Day Avg.", data: stock[:prices][:avg_50_days]}, 
-    {name: "20 Day Avg.", data: stock[:prices][:avg_20_days]}
-    ], library: library_options %>
-<% end %>
+<div id="chart-<%= tick %>">
+  <% if stock[:prices].nil? %>
+    <h2>THIS STOCK IS NIL <%= tick %></h2>
+  <% else %>
+      <% 
+      library_options = {
+        vAxis: {
+          viewWindow: chart_yrange(stock[:prices][:raw_prices])
+        },
+        title: tick,
+        titleTextStyle: { color: 'black',
+                        fontName: 'Times New Roman',
+                        fontSize: 24,
+                        bold: true,
+                        italic: true }
+        } %>
+    <%= line_chart [
+      {name: "Price", data: stock[:prices][:raw_prices]},
+      {name: "50 Day Avg.", data: stock[:prices][:avg_50_days]}, 
+      {name: "20 Day Avg.", data: stock[:prices][:avg_20_days]}
+      ], library: library_options %>
+  <% end %>
+</section>

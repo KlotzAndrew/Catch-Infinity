@@ -1,10 +1,62 @@
-<p id="notice"><%= notice %></p>
-<h1>Listing Stocks </h1>
+<div id="wrapper">
 
-<%= render 'form' %>
-<%= link_to "Update Current Quotes", current_quotes_path %>
-<%= link_to "Update Past Prices", past_prices_path %>
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <ul class="sidebar-nav">
+            <li class="sidebar-brand">
+                <a href="#">
+                    Catch Infinity
+                </a>
+            </li>
 
-<% @stocks.each_pair do |tick, stock| %>
-  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
-<% end %>
+						<% @stocks.each_pair do |tick, stock| %>
+							<li><a href="#chart-<%= tick %>"><%= tick %></a></li>
+						<% end %>
+        </ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                	<%= render 'flash' %>
+
+
+                   <p id="notice"><%= notice %></p>
+										<h1 class="text-center">Stock Charts</h1>
+
+										<div class="row text-center">
+												<div class="col-md-6 col-md-offset-3">
+													<%= render 'form' %>
+												</div>
+										</div>
+
+										<div class="row text-center" style="margin-top: 15px;">
+												<div class="col-md-6 col-md-offset-3">
+			                    <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Sidebar</a>
+													<%= link_to "Update Past Prices", past_prices_path, :class => "btn btn-warning" %>
+													<%= link_to "Update Current Quotes", current_quotes_path, :class => "btn btn-warning" %>
+												</div>
+										</div>
+
+										<% @stocks.each_pair do |tick, stock| %>
+										  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
+										<% end %>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+</div>
+
+<!-- Menu Toggle Script -->
+<script>
+$("#menu-toggle").click(function(e) {
+    e.preventDefault();
+    $("#wrapper").toggleClass("toggled");
+});
+</script>

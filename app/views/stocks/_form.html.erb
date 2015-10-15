@@ -11,10 +11,11 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= f.text_field :ticker, :placeholder => "Ticker" %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
+
+  <div class="input-group">
+    <%= f.text_field :ticker, :placeholder => "Ticker", :class => "form-control" %>
+    <span class="input-group-btn">
+      <%= f.submit "Add Ticker", :class => "btn btn-danger" %>
+    </span>
   </div>
 <% end %>
