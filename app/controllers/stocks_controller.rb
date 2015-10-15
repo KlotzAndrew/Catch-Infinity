@@ -14,7 +14,7 @@ class StocksController < ApplicationController
     Stock.current_price([stock])
 
     respond_to do |format|
-      if stock.id?
+      if !Stock.where(ticker: stock.ticker).first.nil?
         format.html { redirect_to root_path, notice: 'Stock was successfully saved!'}
         format.js
       else

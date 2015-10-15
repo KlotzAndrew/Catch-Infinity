@@ -4,6 +4,7 @@ class StockTest < ActiveSupport::TestCase
   def setup
   	@google = stocks(:google)
   	@yahoo = stocks(:yahoo)
+    @stock = Stock.new
   end
 
   test 'correctly updates current stock data' do
@@ -53,6 +54,15 @@ class StockTest < ActiveSupport::TestCase
       stock = Stock.where(ticker: stock.ticker).first
       assert_operator stock.HistoricalPrices.count, :>=,  50
     end
+  end
 
+  test "ticker should be present" do
+    @stock.ticker = ""
+    assert_not @stock.valid?
+  end
+
+  test "ticker should be unique" do
+    @stock.ticker = "GOOG"
+    assert_not @stock.valid?
   end
 end

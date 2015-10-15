@@ -49,4 +49,12 @@ class StocksControllerTest < ActionController::TestCase
 	  end
 	end
 
+	test "ticker length <1 does not create" do
+		assert_difference 'Stock.count', 0 do
+			VCR.use_cassette("yahoo_finance") do
+	      post :create, stock: { ticker: "" }
+	    end
+	  end
+	end
+
 end

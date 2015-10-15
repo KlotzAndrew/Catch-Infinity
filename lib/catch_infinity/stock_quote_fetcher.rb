@@ -14,10 +14,20 @@ class StockQuoteFetcher
 
 	def call_api
 		# limit of BATCHLIMIT_QUOTES per api call
-		yahoo_tickers =  @stocks.map {|x| "'" + x.ticker + "'"}.join(', ')
+		yahoo_tickers = build_ticker_string
+		return nil unless yahoo_tickers.length > 0
+		request_and_collect_api(yahoo_tickers)
+	end
+
+	def request_and_collect_api(yahoo_tickers)
 		url = yahoo_quote_url(yahoo_tickers)
 		message = open(url, {:read_timeout=>3}).read
 		parse_quote_data(message)
+	end
+
+	def build_ticker_string
+		valid_stocks = @stocks.select {|x| x if x.ticker.length > 0 }
+		valid_stocks.map {|x| "'" + x.ticker + "'"}.join(', ')
 	end
 
 	def yahoo_quote_url(yahoo_tickers)

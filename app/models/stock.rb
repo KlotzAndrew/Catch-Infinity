@@ -3,8 +3,7 @@ require_relative '../../lib/catch_infinity/stock_history_fetcher'
 
 class Stock < ActiveRecord::Base
 	has_many :HistoricalPrices
-	validates :ticker, uniqueness: true
-	BATCHLIMIT_QUOTES = 400
+	validates :ticker, uniqueness: true , length: { minimum: 1 }
 
 	def self.all_prices
 		index_hash = {}
