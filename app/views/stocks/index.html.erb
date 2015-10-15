@@ -8,10 +8,11 @@
                     Catch Infinity
                 </a>
             </li>
-
-						<% @stocks.each_pair do |tick, stock| %>
-							<li><a href="#chart-<%= tick %>"><%= tick %></a></li>
+            
+						<% @stocks.each do |tick, stock| %>
+							<li><a href="#chart-<%= tick %>"><%= stock[:prices][:today_jump].to_f.round(2) if stock[:prices]%>, <%= tick %></a></li>
 						<% end %>
+						
         </ul>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -41,7 +42,7 @@
 												</div>
 										</div>
 
-										<% @stocks.each_pair do |tick, stock| %>
+										<% @stocks.each do |tick, stock| %>
 										  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
 										<% end %>
 

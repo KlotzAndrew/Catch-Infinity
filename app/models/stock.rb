@@ -16,6 +16,7 @@ class Stock < ActiveRecord::Base
 				}
 			)
 		end
+		index_hash = sort_by_breakout_value(index_hash) if index_hash.count > 1
 		return index_hash
 	end
 
@@ -89,8 +90,19 @@ class Stock < ActiveRecord::Base
 		chart_hash = {
 			raw_prices: chart_raw_prices(historicalprices),
 			avg_50_days: chart_day_avg(historicalprices, 50),
-			avg_20_days: chart_day_avg(historicalprices, 20)
+			avg_20_days: chart_day_avg(historicalprices, 20),
 		}
+		return add_breakout_value(chart_hash)
+	end
+
+	def self.add_breakout_value(chart_hash)
+		chart_hash[:today_jump] = (chart_hash[:raw_prices].values.last - chart_hash[:avg_20_days].values.last)
+		return chart_hash
+	end
+
+	def self.sort_by_breakout_value(index_hash)
+		hash = index_hash.sort { |a,v| (a[1][:prices].nil? or v[1][:prices].nil?) ? ( a ? -1 : 1 ) : v[1][:prices][:today_jump] <=> a[1][:prices][:today_jump] }
+		return hash
 	end
 
 	def self.chart_day_avg(historicalprices, range)
