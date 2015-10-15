@@ -18,3 +18,7 @@
 
 # Ignore vcr recordings
 /fixtures/vcr_cassettes/*
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
