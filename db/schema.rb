@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 20150929193820) do
 
-  create_table "historical_prices", force: :cascade do |t|
+  create_table "histories", force: :cascade do |t|
     t.integer  "stock_id"
     t.datetime "date"
     t.decimal  "price_day_close"

@@ -1,21 +1,21 @@
 require 'test_helper'
-require_relative '../../lib/catch_infinity/stock_history_fetcher'
+require_relative '../../../lib/catch_infinity/fetcher/histories'
 
-class StockHistoryFetcherTest < ActionController::TestCase
+class FetcherHistoriesTest < ActionController::TestCase
 	def setup
   	@google = stocks(:google)
   end
 
   test 'corrctly returns hash of historical prices' do
   	VCR.use_cassette("yahoo_finance") do
-  		fetcher = StockHistoryFetcher.new([@google])
+  		fetcher = Fetcher::Histories.new([@google.ticker])
 
   		prices = fetcher.fetch
 			assert_equal prices["GOOG"].first, 
 			[
-				DateTime.new(2015,10,14),
+				DateTime.new(2015,10,16),
 				{
-					price_day_close: BigDecimal.new("659.390015")
+					price_day_close: BigDecimal.new("664.969971")
 				}
 			]
 			assert_equal prices["GOOG"].count, 65	

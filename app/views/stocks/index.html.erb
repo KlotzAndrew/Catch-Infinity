@@ -9,9 +9,11 @@
                 </a>
             </li>
             
-						<% @stocks.each do |tick, stock| %>
-							<li><a href="#chart-<%= tick %>"><%= stock[:prices][:today_jump].to_f.round(2) if stock[:prices]%>, <%= tick %></a></li>
-						<% end %>
+            <% if @stocks %>
+    			<% @stocks.each do |tick, stock| %>
+    				<li><a href="#chart-<%= tick %>"><%= stock[:prices][:today_jump].to_f.round(2) if stock[:prices]%>, <%= tick %></a></li>
+    			<% end %>
+            <% end %>
 						
         </ul>
     </div>
@@ -24,25 +26,27 @@
                 <div class="col-lg-12">
                 	<%= render 'flash' %>
 
-										<h1 class="text-center">Stock Charts</h1>
+						<h1 class="text-center">Stock Charts</h1>
 
-										<div class="row text-center">
-												<div class="col-md-6 col-md-offset-3">
-													<%= render 'form' %>
-												</div>
-										</div>
+						<div class="row text-center">
+								<div class="col-md-6 col-md-offset-3">
+									<%= render 'form' %>
+								</div>
+						</div>
 
-										<div class="row text-center" style="margin-top: 15px;">
-												<div class="col-md-6 col-md-offset-3">
-			                    <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Sidebar</a>
-													<%= link_to "Update Past Prices", past_prices_path, :class => "btn btn-warning" %>
-													<%= link_to "Update Current Quotes", current_quotes_path, :class => "btn btn-warning" %>
-												</div>
-										</div>
+						<div class="row text-center" style="margin-top: 15px;">
+								<div class="col-md-6 col-md-offset-3">
+                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Sidebar</a>
+									<%= link_to "Update Past Prices", histories_mass_update_path, :class => "btn btn-warning" %>
+									<%= link_to "Update Current Quotes", stocks_mass_update_path, :class => "btn btn-warning" %>
+								</div>
+						</div>
 
-										<% @stocks.each do |tick, stock| %>
-										  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
-										<% end %>
+                        <% if @stocks %>
+						<% @stocks.each do |tick, stock| %>
+						  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
+						<% end %>
+                        <% end %>
 
                 </div>
             </div>

@@ -15,6 +15,8 @@ gem "chartkick"
 gem 'puma'
 
 group :development, :test do
+	gem 'pry'
+	gem 'pry-rails'
   gem 'sqlite3'
   gem 'byebug'
   gem 'web-console', '~> 2.0'

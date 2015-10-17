@@ -9,26 +9,17 @@ class StocksControllerTest < ActionController::TestCase
 		get :index
 		assert_response :success
 		assert_not_nil assigns(:stocks)
+		assert_not_nil assigns(:stock)
 		#this is a weak assertion for charts rendering
 		# assert_select 'div#chart-1', nil
 	end
 
-	test "button should update quote data" do
+	test "button should update all quote data" do
 		assert_equal nil, @google.last_price
 	    VCR.use_cassette("yahoo_finance") do
-		    get :current_quotes
+		    get :mass_update
 				@google.reload
 		    refute_nil @google.last_price
-		    assert_redirected_to root_path
-			end
-	end
-
-	test "button should update past price" do
-		assert_equal 0, @google.HistoricalPrices.count
-	    VCR.use_cassette("yahoo_finance") do
-		    get :past_prices
-				@google.reload
-		    assert_operator @google.HistoricalPrices.count, :>=,  50
 		    assert_redirected_to root_path
 			end
 	end
@@ -41,20 +32,12 @@ class StocksControllerTest < ActionController::TestCase
 	  end
 	end
 
-	test "does not create stock with invalid ticker" do
-		assert_difference 'Stock.count', 0 do
+	test "should create stock histories" do
+		assert_difference 'History.count', 65 do
 			VCR.use_cassette("yahoo_finance") do
-	      post :create, stock: { ticker: "1" }
+	      post :create, stock: { ticker: "FB" }
 	    end
 	  end
-	end
-
-	test "ticker length <1 does not create" do
-		assert_difference 'Stock.count', 0 do
-			VCR.use_cassette("yahoo_finance") do
-	      post :create, stock: { ticker: "" }
-	    end
-	  end
-	end
+	end	
 
 end

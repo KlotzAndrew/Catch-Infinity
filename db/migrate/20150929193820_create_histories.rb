@@ -1,6 +1,6 @@
-class CreateHistoricalPrices < ActiveRecord::Migration
+class CreateHistories < ActiveRecord::Migration
   def change
-    create_table :historical_prices do |t|
+    create_table :histories do |t|
       t.integer :stock_id
       t.datetime :date
       t.decimal :price_day_close

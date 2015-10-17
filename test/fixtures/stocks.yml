@@ -13,10 +13,10 @@ yahoo:
   stock_exchange: 
 
 tesla:
-  ticker: "TLSA"
+  ticker: "TSLA"
   name: 
   last_price:
-  last_trade:
+  last_trade: <%= YAML.dump(DateTime.new(2015,10,14)) %>
   stock_exchange: 
 
 tesla:
@@ -24,4 +24,4 @@ tesla:
   name: 
   last_price:
   last_trade:
-  stock_exchange:   
+  stock_exchange:

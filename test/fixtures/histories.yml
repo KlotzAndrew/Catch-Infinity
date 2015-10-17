@@ -1,7 +1,7 @@
 <% 1.upto(50) do |x| %>
 hp_tesla-<%= x %>:
   stock: tesla
-  date: <%= x.days.ago %>
+  date: <%= DateTime.new(2015,10,14) - x.days %>
   price_day_close: <%= x %>
 <% end %>
 
