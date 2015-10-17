@@ -18,7 +18,7 @@ class Stock < ActiveRecord::Base
 	    	end
 	    end
 	  rescue => e
-	    # Rails.logger("There was an exception: #{e}")
+	    Rails.logger.info("There was an exception: #{e}")
 	  end
 	end
 

@@ -43,14 +43,15 @@ module Fetcher
 		end	
 
 		def hash_stock_timeseries(data)
-			stock_hash = Hash.new(0)
+			stock_array = []
 			data.each do |days_info|
 				date = parse_year_month_day(days_info)
-				stock_hash[date] = {
+				stock_array << {
+					date: date,
 					price_day_close: BigDecimal.new("#{days_info["High"]}"),
 				}
 			end
-			return stock_hash
+			return stock_array
 		end
 
 		def parse_year_month_day(days_info)
