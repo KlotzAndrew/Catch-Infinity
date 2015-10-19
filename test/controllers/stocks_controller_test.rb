@@ -33,7 +33,7 @@ class StocksControllerTest < ActionController::TestCase
 	end
 
 	test "should create stock histories" do
-		assert_difference 'History.count', 65 do
+		assert_difference 'History.count', 64 do
 			VCR.use_cassette("yahoo_finance") do
 	      post :create, stock: { ticker: "FB" }
 	    end

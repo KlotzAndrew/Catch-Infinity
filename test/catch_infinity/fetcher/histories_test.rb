@@ -20,7 +20,7 @@ class FetcherHistoriesTest < ActionController::TestCase
 					date: DateTime.new(2015,10,19),
 					price_day_close: BigDecimal.new("666.820007")
 				}
-			assert_equal prices["GOOG"].count, 65	
+			assert_equal prices["GOOG"].count, 64
   	end
 
   end
