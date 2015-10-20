@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :trades
+  resources :backtests
   root 'stocks#index'
 
   resources :stocks, only: [:index, :create, :update]

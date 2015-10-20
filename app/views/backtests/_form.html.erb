@@ -1,0 +1,17 @@
+<%= form_for(@backtest) do |f| %>
+  <% if @backtest.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@backtest.errors.count, "error") %> prohibited this backtest from being saved:</h2>
+
+      <ul>
+      <% @backtest.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

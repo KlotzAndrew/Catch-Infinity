@@ -11,7 +11,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150929193820) do
+ActiveRecord::Schema.define(version: 20151020153832) do
+
+  create_table "backtests", force: :cascade do |t|
+    t.decimal  "value_start"
+    t.decimal  "value_end"
+    t.decimal  "return"
+    t.boolean  "dollar_cost_average", default: false
+    t.string   "buy_signal"
+    t.string   "sell_signal"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
 
   create_table "histories", force: :cascade do |t|
     t.integer  "stock_id"
@@ -29,6 +40,19 @@ ActiveRecord::Schema.define(version: 20150929193820) do
     t.datetime "last_trade"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
+  end
+
+  create_table "trades", force: :cascade do |t|
+    t.integer  "backtest_id"
+    t.string   "stock_id"
+    t.integer  "quantity"
+    t.decimal  "buy_price"
+    t.datetime "buy_date"
+    t.decimal  "sell_price"
+    t.datetime "sell_date"
+    t.decimal  "return"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
 end
