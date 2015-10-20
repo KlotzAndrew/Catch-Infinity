@@ -3,6 +3,9 @@ require_relative '../../lib/catch_infinity/fetcher/histories'
 
 class Stock < ActiveRecord::Base
 	has_many :histories
+	has_many :backtest_stocks
+	has_many :backtests, through: :backtest_stocks
+
 	validates :ticker, uniqueness: true , length: { minimum: 1 }
 	validates :name, presence: true
 

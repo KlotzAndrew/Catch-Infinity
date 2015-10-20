@@ -11,12 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151020153832) do
+ActiveRecord::Schema.define(version: 20151020201603) do
+
+  create_table "backtest_stocks", force: :cascade do |t|
+    t.integer  "stock_id"
+    t.integer  "backtest_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "backtest_stocks", ["backtest_id"], name: "index_backtest_stocks_on_backtest_id"
+  add_index "backtest_stocks", ["stock_id"], name: "index_backtest_stocks_on_stock_id"
 
   create_table "backtests", force: :cascade do |t|
     t.decimal  "value_start"
     t.decimal  "value_end"
-    t.decimal  "return"
     t.boolean  "dollar_cost_average", default: false
     t.string   "buy_signal"
     t.string   "sell_signal"
