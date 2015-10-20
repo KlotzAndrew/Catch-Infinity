@@ -2,10 +2,10 @@ module Fetcher
 	class Histories
 		attr_reader :tickers, :query_start, :query_end
 
-		def initialize(ticker_array)
+		def initialize(ticker_array, options = {})
 			@tickers = ticker_array
-			@query_end = Time.now.strftime("%Y-%m-%d")
-			@query_start = 3.months.ago.strftime("%Y-%m-%d")
+			@query_end = options[:query_start] || Time.now.strftime("%Y-%m-%d")
+			@query_start = options[:query_end] || 3.months.ago.strftime("%Y-%m-%d")
 		end
 
 		def fetch
