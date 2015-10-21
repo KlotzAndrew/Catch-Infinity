@@ -4,6 +4,7 @@ require_relative '../../../lib/catch_infinity/calculator/backtests'
 class BacktestsTest < ActionController::TestCase
 	def setup
 		@tesla = stocks(:tesla)
+		@google = stocks(:google)
 	end
 
 	test "return a number of trades" do
@@ -52,12 +53,12 @@ class BacktestsTest < ActionController::TestCase
 				dollar_cost_average: false,
 				sell_signal: "p>20>50",
 				buy_signal: "p<20<50",
-				stocks: [@tesla]
+				stocks: [@tesla, @google]
 			}		
 			calculator = Calculator::Backtests.new(options)
 			answers = calculator.calculate
 
-			assert_equal answers[:trades_array].count, 3
+			assert_equal answers[:trades_array].count, 5
 			answers[:trades_array].each do |trade|
 				assert_not_nil trade[:sell_price]
 				assert_not_nil trade[:sell_date]

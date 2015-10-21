@@ -9,7 +9,7 @@
         <td><%= link_to 'Destroy', backtest, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       <br/>
       <% backtest.trades.each do |trade|  %>
-        <%= trade.quantity %> | <%= trade.buy_price.to_f %> => <%= trade.sell_price.to_f %>
+        <%= trade.quantity %> | <%= trade.buy_price.to_f %> => <%= trade.sell_price.to_f %> | <%= trade.stock.name %>
         <br/>
       <% end %>
       <br/>

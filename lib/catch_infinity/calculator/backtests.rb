@@ -43,13 +43,23 @@ module Calculator
 					value_end: @value_start,
 					trades_array: []
 			}
+			last_day = nil
 			collected_histories.each do |day, histories|
+				last_day = day
 				histories.each do |k, v|
 					calculator_numbers = change_moving_averages(k, v, calculator_numbers)
 					calculator_numbers = adjust_holdings(day, k, v, calculator_numbers)
 				end
 			end
-			# liquidate excess holdings
+			calculator_numbers = sell_all_holdings(last_day, calculator_numbers)
+			return calculator_numbers
+		end
+
+		def sell_all_holdings(last_day, calculator_numbers)
+			calculator_numbers[:stock_holdings].each do |key, value|
+				price = calculator_numbers[:avg_20_day][key].last
+				calculator_numbers = sell(last_day, key, price, calculator_numbers) if value >= 0
+			end
 			return calculator_numbers
 		end
 
@@ -167,11 +177,11 @@ module Calculator
 		end
 
 		def far_back_enough?(histories)
-			return true if histories.first.date < (@query_start - QUERY_START_BUFFER)
+			return true if histories.first && histories.first.date < (@query_start - QUERY_START_BUFFER)
 		end
 
 		def recent_enough?(histories)
-			return true if histories.last.date > QUERY_END_BUFFER
+			return true if histories.last && histories.last.date > QUERY_END_BUFFER
 		end
 
 		def create_stock_histories(ticker)

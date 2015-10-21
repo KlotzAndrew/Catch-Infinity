@@ -33,7 +33,7 @@ class BacktestsController < ApplicationController
         dollar_cost_average: false,
         sell_signal: "p>20>50",
         buy_signal: "p<20<50",
-        stocks: [Stock.last]
+        stocks: Stock.all
       }
 
     calculator = Calculator::Backtests.new(options)

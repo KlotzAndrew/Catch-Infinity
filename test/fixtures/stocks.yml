@@ -19,7 +19,7 @@ tesla:
   last_trade: <%= YAML.dump(DateTime.new(2015,10,14)) %>
   stock_exchange: 
 
-tesla:
+apple:
   ticker: "AAPL"
   name: 
   last_price:
