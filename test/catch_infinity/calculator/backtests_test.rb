@@ -19,7 +19,7 @@ class BacktestsTest < ActionController::TestCase
 			}
 			calculator = Calculator::Backtests.new(options)
 			answers = calculator.calculate
-			assert_equal answers, 14000
+			assert_equal answers[:value_end].to_f, 49271.909762
 		end
 	end
 

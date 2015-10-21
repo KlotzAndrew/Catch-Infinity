@@ -36,79 +36,87 @@ module Calculator
 		end
 
 		def history_run(collected_histories)
-			avg_20_day = {}
-			avg_50_day = {}
-			stock_holdings = {}
-			total_value = @value_start
+			calculator_numbers = {
+					avg_20_day: {},
+					avg_50_day: {},
+					stock_holdings: {},
+					value_end: @value_start
+			}
 			collected_histories.each do |day, histories|
 				histories.each do |k, v|
-					change_moving_averages(k, v, avg_20_day, avg_50_day)
-					adjust_holdings(k, v, avg_20_day, avg_50_day, stock_holdings, total_value)
+					calculator_numbers = change_moving_averages(k, v, calculator_numbers)
+					calculator_numbers = adjust_holdings(k, v, calculator_numbers)
 				end
 			end
 			# liquidate excess holdings
-			return total_value
+			puts calculator_numbers[:stock_holdings]
+			return calculator_numbers
 		end
 
-		def change_moving_averages(key, value, avg_20_day, avg_50_day)
-			move_20_day(key, value, avg_20_day)
-			move_50_day(key, value, avg_50_day)
+		def change_moving_averages(key, value, calculator_numbers)
+			calculator_numbers = move_20_day(key, value, calculator_numbers)
+			calculator_numbers = move_50_day(key, value, calculator_numbers)
 		end
 
-		def move_20_day(key, value, avg_20_day)
-			avg_20_day[key] = [] unless avg_20_day[key]
-			avg_20_day[key] << value
-			avg_20_day[key].shift if avg_20_day[key].count > 20
+		def move_20_day(key, value, calculator_numbers)
+			calculator_numbers[:avg_20_day][key] = [] unless calculator_numbers[:avg_20_day][key]
+			calculator_numbers[:avg_20_day][key] << value
+			calculator_numbers[:avg_20_day][key].shift if calculator_numbers[:avg_20_day][key].count > 20
+			return calculator_numbers
 		end
 
-		def move_50_day(key, value, avg_50_day)
-			avg_50_day[key] = [] unless avg_50_day[key]
-			avg_50_day[key] << value
-			avg_50_day[key].shift if avg_50_day[key].count > 50
+		def move_50_day(key, value, calculator_numbers)
+			calculator_numbers[:avg_50_day][key] = [] unless calculator_numbers[:avg_50_day][key]
+			calculator_numbers[:avg_50_day][key] << value
+			calculator_numbers[:avg_50_day][key].shift if calculator_numbers[:avg_50_day][key].count > 50
+			return calculator_numbers
 		end
 
-		def adjust_holdings(key, value, avg_20_day, avg_50_day, stock_holdings, total_value)
-			buy(key, value, stock_holdings, total_value) if not_holding?(key, stock_holdings) && have_money?(total_value) && should_buy?(key, value, avg_20_day, avg_50_day)
-			sell(key, value, stock_holdings, total_value) if !not_holding?(key, stock_holdings) && should_sell?(key, value, avg_20_day, avg_50_day)
+		def adjust_holdings(key, value, calculator_numbers)
+			calculator_numbers = buy(key, value, calculator_numbers) if not_holding?(key, calculator_numbers) && have_money?(calculator_numbers) && should_buy?(key, value, calculator_numbers)
+			calculator_numbers = sell(key, value, calculator_numbers) if !not_holding?(key, calculator_numbers) && should_sell?(key, value, calculator_numbers)
+			return calculator_numbers
 		end
 
-		def should_sell?(key, value, avg_20_day, avg_50_day)
-			avg50 = BigDecimal.new(avg_50_day[key].sum)/BigDecimal.new(avg_50_day[key].count)
-			avg20 = BigDecimal.new(avg_20_day[key].sum)/BigDecimal.new(avg_20_day[key].count)
+		def should_sell?(key, value, calculator_numbers)
+			avg50 = BigDecimal.new(calculator_numbers[:avg_50_day][key].sum)/BigDecimal.new(calculator_numbers[:avg_50_day][key].count)
+			avg20 = BigDecimal.new(calculator_numbers[:avg_20_day][key].sum)/BigDecimal.new(calculator_numbers[:avg_20_day][key].count)
 			return true if value > avg20 && avg20 > avg50
 		end 
 
-		def sell(key, value, stock_holdings, total_value)
-			total_value += (stock_holdings[key]*value)
-			stock_holdings[key] = 0
+		def sell(key, value, calculator_numbers)
+			calculator_numbers[:value_end] += (calculator_numbers[:stock_holdings][key]*value)
+			calculator_numbers[:stock_holdings][key] = 0
+			return calculator_numbers
 		end
 
-		def not_holding?(key, stock_holdings)
-			stock_holdings[key] ||= 0
-			return true if stock_holdings[key] == 0
+		def not_holding?(key, calculator_numbers)
+			calculator_numbers[:stock_holdings][key] ||= 0
+			return true if calculator_numbers[:stock_holdings][key] == 0
 			return false
 		end
 
-		def have_money?(total_value)
-			return true if total_value > 1
+		def have_money?(calculator_numbers)
+			return true if calculator_numbers[:value_end] > 1
 		end
 
-		def should_buy?(key, value, avg_20_day, avg_50_day)
-			avg50 = BigDecimal.new(avg_50_day[key].sum)/BigDecimal.new(avg_50_day[key].count)
-			avg20 = BigDecimal.new(avg_20_day[key].sum)/BigDecimal.new(avg_20_day[key].count)
+		def should_buy?(key, value, calculator_numbers)
+			avg50 = BigDecimal.new(calculator_numbers[:avg_50_day][key].sum)/BigDecimal.new(calculator_numbers[:avg_50_day][key].count)
+			avg20 = BigDecimal.new(calculator_numbers[:avg_20_day][key].sum)/BigDecimal.new(calculator_numbers[:avg_20_day][key].count)
 			return true if value < avg20 && avg20 < avg50
 		end
 
-		def buy(key, value, stock_holdings, total_value)
-			invest_value = calculate_invest_value(total_value)
+		def buy(key, value, calculator_numbers)
+			invest_value = calculate_invest_value(calculator_numbers[:value_end])
 			quantity = (invest_value/value).floor
-			stock_holdings[key] += quantity
-			total_value -= (quantity*value)
+			calculator_numbers[:stock_holdings][key] += quantity
+			calculator_numbers[:value_end] -= (quantity*value)
+			return calculator_numbers
 		end
 
-		def calculate_invest_value(total_value)
-			if total_value < @value_start*0.1
-				total_value
+		def calculate_invest_value(value_end)
+			if value_end < @value_start*0.1
+				value_end
 			else
 				@value_start*0.1
 			end

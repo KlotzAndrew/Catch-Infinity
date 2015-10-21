@@ -9,6 +9,15 @@ class Stock < ActiveRecord::Base
 	validates :ticker, uniqueness: true , length: { minimum: 1 }
 	validates :name, presence: true
 
+	def tes(a)
+		tes2(a)
+		puts a
+	end
+
+	def tes2(a)
+		a +=1
+	end
+
 	def self.insert_or_update(stock_hashes)
 	  begin
 	    Stock.transaction do
