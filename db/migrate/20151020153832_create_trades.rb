@@ -8,7 +8,6 @@ class CreateTrades < ActiveRecord::Migration
     	t.datetime :buy_date
     	t.decimal :sell_price
     	t.datetime :sell_date
-    	t.decimal :return
 
       t.timestamps null: false
     end

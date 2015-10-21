@@ -40,16 +40,16 @@ module Calculator
 					avg_20_day: {},
 					avg_50_day: {},
 					stock_holdings: {},
-					value_end: @value_start
+					value_end: @value_start,
+					trades_array: []
 			}
 			collected_histories.each do |day, histories|
 				histories.each do |k, v|
 					calculator_numbers = change_moving_averages(k, v, calculator_numbers)
-					calculator_numbers = adjust_holdings(k, v, calculator_numbers)
+					calculator_numbers = adjust_holdings(day, k, v, calculator_numbers)
 				end
 			end
 			# liquidate excess holdings
-			puts calculator_numbers[:stock_holdings]
 			return calculator_numbers
 		end
 
@@ -72,9 +72,9 @@ module Calculator
 			return calculator_numbers
 		end
 
-		def adjust_holdings(key, value, calculator_numbers)
-			calculator_numbers = buy(key, value, calculator_numbers) if not_holding?(key, calculator_numbers) && have_money?(calculator_numbers) && should_buy?(key, value, calculator_numbers)
-			calculator_numbers = sell(key, value, calculator_numbers) if !not_holding?(key, calculator_numbers) && should_sell?(key, value, calculator_numbers)
+		def adjust_holdings(day, key, value, calculator_numbers)
+			calculator_numbers = buy(day, key, value, calculator_numbers) if not_holding?(key, calculator_numbers) && have_money?(calculator_numbers) && should_buy?(key, value, calculator_numbers)
+			calculator_numbers = sell(day, key, value, calculator_numbers) if !not_holding?(key, calculator_numbers) && should_sell?(key, value, calculator_numbers)
 			return calculator_numbers
 		end
 
@@ -84,9 +84,20 @@ module Calculator
 			return true if value > avg20 && avg20 > avg50
 		end 
 
-		def sell(key, value, calculator_numbers)
+		def sell(day, key, value, calculator_numbers)
 			calculator_numbers[:value_end] += (calculator_numbers[:stock_holdings][key]*value)
 			calculator_numbers[:stock_holdings][key] = 0
+			calculator_numbers = build_trade_hash_sell(day,key,value,calculator_numbers)
+			return calculator_numbers
+		end
+
+		def build_trade_hash_sell(day, key,value,calculator_numbers)
+			calculator_numbers[:trades_array].each do |trade|
+				if trade[:stock_id] == key && trade[:sell_date].nil?
+					trade[:sell_date] = day
+					trade[:sell_price] = value
+				end
+			end
 			return calculator_numbers
 		end
 
@@ -106,11 +117,23 @@ module Calculator
 			return true if value < avg20 && avg20 < avg50
 		end
 
-		def buy(key, value, calculator_numbers)
+		def buy(day, key, value, calculator_numbers)
 			invest_value = calculate_invest_value(calculator_numbers[:value_end])
 			quantity = (invest_value/value).floor
 			calculator_numbers[:stock_holdings][key] += quantity
 			calculator_numbers[:value_end] -= (quantity*value)
+			calculator_numbers = build_trade_hash_buy(day, key, value, quantity,calculator_numbers)
+			return calculator_numbers
+		end
+
+		def build_trade_hash_buy(day, key,value,quantity,calculator_numbers)
+			trade = {
+				stock_id: key,
+				quantity: quantity,
+				buy_price: value,
+				buy_date: day
+			}
+			calculator_numbers[:trades_array] << trade
 			return calculator_numbers
 		end
 

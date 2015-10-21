@@ -59,7 +59,6 @@ ActiveRecord::Schema.define(version: 20151020201603) do
     t.datetime "buy_date"
     t.decimal  "sell_price"
     t.datetime "sell_date"
-    t.decimal  "return"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
   end
