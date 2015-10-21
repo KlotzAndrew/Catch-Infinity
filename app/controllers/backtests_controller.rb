@@ -26,8 +26,37 @@ class BacktestsController < ApplicationController
   def create
     @backtest = Backtest.new(backtest_params)
 
+    options = {
+        query_start: DateTime.new(2015,10,19),
+        query_end: (DateTime.new(2015,10,19) - 1.year),
+        value_start: 10000,
+        dollar_cost_average: false,
+        sell_signal: "p>20>50",
+        buy_signal: "p<20<50",
+        stocks: [Stock.last]
+      }
+
+    calculator = Calculator::Backtests.new(options)
+    answers = calculator.calculate
+    options[:value_end] = answers[:value_end]
+
+    backtest_hash = {
+      value_start: options[:value_start],
+      value_end: options[:value_end],
+      dollar_cost_average: options[:dollar_cost_average],
+      buy_signal: options[:buy_signal],
+      sell_signal: options[:sell_signal],
+      query_start: options[:query_start],
+      query_end: options[:query_end]
+    }
+    backtest = Backtest.insert_or_update(backtest_hash)
+    answers[:trades_array].each do |trade_hash|
+      trade_hash[:backtest_id] = backtest.id
+      Trade.insert_or_update(trade_hash)
+    end
+
     respond_to do |format|
-      if @backtest.save
+      if backtest.save
         format.html { redirect_to @backtest, notice: 'Backtest was successfully created.' }
         format.json { render :show, status: :created, location: @backtest }
       else

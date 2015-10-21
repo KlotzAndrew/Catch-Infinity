@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 20151020201603) do
     t.boolean  "dollar_cost_average", default: false
     t.string   "buy_signal"
     t.string   "sell_signal"
+    t.datetime "query_start"
+    t.datetime "query_end"
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
   end
