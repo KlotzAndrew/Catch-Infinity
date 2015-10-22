@@ -24,6 +24,8 @@ class BacktestsController < ApplicationController
   def create
     Rails.logger.info "backtest_params_hurr: #{backtest_params}"
 
+    stock_ids = backtest_params["stocks"].select {|x| x unless x.empty?}
+    stocks = stock_ids.map {|x| Stock.find(x)}
     options = {
         query_start: DateTime.new(
           backtest_params["query_start(1i)"].to_i,
@@ -37,7 +39,7 @@ class BacktestsController < ApplicationController
         dollar_cost_average: false,
         sell_signal: "p>20>50",
         buy_signal: "p<20<50",
-        stocks: Stock.all
+        stocks:  stocks
       }
 
     Rails.logger.info "OPTIONSSSS: #{options}"
@@ -89,6 +91,6 @@ class BacktestsController < ApplicationController
     end
 
     def backtest_params
-      params.require(:backtest).permit(:query_start, :query_end, :value_start, :dollar_cost_average, :sell_signal, :buy_signal, :stocks)
+      params.require(:backtest).permit(:query_start, :query_end, :value_start, :dollar_cost_average, :sell_signal, :buy_signal, :stocks => [])
     end
 end

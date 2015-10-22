@@ -1,7 +1,7 @@
 <%= form_for(@backtest) do |f| %>
   <% if @backtest.errors.any? %>
     <div id="error_explanation">
-      <h2><%= pluralize(@backtest.errors.count, "error") %> prohibited this backtest from being saved:</h2>
+      <h4><%= pluralize(@backtest.errors.count, "error") %> prohibited this backtest from being saved:</h4>
 
       <ul>
       <% @backtest.errors.full_messages.each do |message| %>
@@ -11,21 +11,23 @@
     </div>
   <% end %>
 
-  <h2>From:</h2>
+  <h4>From:</h4>
   <%= date_select("backtest", "query_end", order: [:year,:month,:day], default: 1.year.ago)  %>
-  <h2>To:</h2>
+  <h4>To:</h4>
   <%= date_select("backtest", "query_start", order: [:year,:month,:day])  %>
 
-  <h2>Starting value</h2>
-  <%= f.text_field :value_start%>
+  <h4>Starting value</h4>
+  <%= f.text_field :value_start %>
 
-  <h2>Stocks to Backtest</h2>
-  <%= f.select(:stocks) do %>
-    <% @stocks.each do |c| -%>
-      <%= content_tag(:option, c.name, value: c.id) %>
-    <% end %>
-  <% end %>
+  <h4>Stocks to Backtest</h4>
 
+<%= f.select :stocks, @stocks.collect {|x| [x.name, x.id]}, {}, :multiple => true %>
+
+<h4>Buy conditions</h4>
+"p < avg_20_days < avg_50_days"
+
+<h4>Sell conditions</h4>
+"p > avg_20_days > avg_50_days"
 
   <div class="actions">
     <%= f.submit %>

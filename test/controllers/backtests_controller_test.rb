@@ -3,6 +3,8 @@ require 'test_helper'
 class BacktestsControllerTest < ActionController::TestCase
   setup do
     @backtest = backtests(:basic_test)
+    @google = stocks(:google)
+    @tesla = stocks(:tesla)
   end
 
   test "should create backtest" do
@@ -10,8 +12,16 @@ class BacktestsControllerTest < ActionController::TestCase
       get :new
       assert_difference('Backtest.count') do
         post :create, backtest: {
-          query_start: DateTime.new(2015,10,19),
-          query_end: (DateTime.new(2015,10,19) - 1.year)
+          "query_start(1i)" => 2015,
+          "query_start(2i)" => 10,
+          "query_start(3i)" => 22,
+          "query_end(1i)" => 2014,
+          "query_end(2i)" => 10,
+          "query_end(3i)" => 22,
+          # query_start: DateTime.new(2015,10,19),
+          # query_end: (DateTime.new(2015,10,19) - 1.year),
+          stocks: ["", "#{@google.id}", "#{@tesla.id}"],
+          value_start: 10000
         }
       end
     end
