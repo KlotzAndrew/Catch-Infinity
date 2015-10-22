@@ -20,7 +20,7 @@ class BacktestsTest < ActionController::TestCase
 			}
 			calculator = Calculator::Backtests.new(options)
 			answers = calculator.calculate
-			assert_equal answers[:value_end].to_f, 49271.909762
+			assert_equal answers[:value_end].to_f, 10024.52002
 		end
 	end
 
@@ -58,7 +58,7 @@ class BacktestsTest < ActionController::TestCase
 			calculator = Calculator::Backtests.new(options)
 			answers = calculator.calculate
 
-			assert_equal answers[:trades_array].count, 5
+			assert_equal answers[:trades_array].count, 6
 			answers[:trades_array].each do |trade|
 				assert_not_nil trade[:sell_price]
 				assert_not_nil trade[:sell_date]

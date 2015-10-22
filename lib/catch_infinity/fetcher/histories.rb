@@ -4,8 +4,8 @@ module Fetcher
 
 		def initialize(ticker_array, options = {})
 			@tickers = ticker_array
-			@query_end = options[:query_start] || Time.now.strftime("%Y-%m-%d")
-			@query_start = options[:query_end] || 3.months.ago.strftime("%Y-%m-%d")
+			@query_end = options[:query_start].strftime("%Y-%m-%d") || Time.now.strftime("%Y-%m-%d")
+			@query_start = options[:query_end].strftime("%Y-%m-%d") || 3.months.ago.strftime("%Y-%m-%d")
 		end
 
 		def fetch

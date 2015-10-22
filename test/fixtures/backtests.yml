@@ -1,0 +1,8 @@
+basic_test:
+  value_start: 10000
+  value_end: 10500
+  dollar_cost_average: false
+  buy_signal: "abc"
+  sell_signal: "iudfd"
+  query_start: <%= YAML.dump(Time.now) %>
+  query_end: <%= YAML.dump(1.year.ago) %>

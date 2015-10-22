@@ -5,7 +5,6 @@
     <% @backtests.each do |backtest| %>
         <%= backtest.value_start %> => <%= backtest.value_end%>
         <td><%= link_to 'Show', backtest %></td>
-        <td><%= link_to 'Edit', edit_backtest_path(backtest) %></td>
         <td><%= link_to 'Destroy', backtest, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       <br/>
       <% backtest.trades.each do |trade|  %>

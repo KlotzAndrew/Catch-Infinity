@@ -164,6 +164,7 @@ module Calculator
 					collected_histories[history.date][history.stock_id] = history.price_day_close
 				end		
 			end
+			collected_histories = collected_histories.sort_by {|k,v| k}
 			return collected_histories
 		end
 

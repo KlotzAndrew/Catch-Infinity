@@ -11,6 +11,22 @@
     </div>
   <% end %>
 
+  <h2>From:</h2>
+  <%= date_select("backtest", "query_end", order: [:year,:month,:day], default: 1.year.ago)  %>
+  <h2>To:</h2>
+  <%= date_select("backtest", "query_start", order: [:year,:month,:day])  %>
+
+  <h2>Starting value</h2>
+  <%= f.text_field :value_start%>
+
+  <h2>Stocks to Backtest</h2>
+  <%= f.select(:stocks) do %>
+    <% @stocks.each do |c| -%>
+      <%= content_tag(:option, c.name, value: c.id) %>
+    <% end %>
+  <% end %>
+
+
   <div class="actions">
     <%= f.submit %>
   </div>

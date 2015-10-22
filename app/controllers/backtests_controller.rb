@@ -14,27 +14,33 @@ class BacktestsController < ApplicationController
 
   # GET /backtests/new
   def new
+    @stocks = Stock.all
     @backtest = Backtest.new
   end
 
-  # GET /backtests/1/edit
-  def edit
-  end
 
   # POST /backtests
   # POST /backtests.json
   def create
-    @backtest = Backtest.new(backtest_params)
+    Rails.logger.info "backtest_params_hurr: #{backtest_params}"
 
     options = {
-        query_start: DateTime.new(2015,10,19),
-        query_end: (DateTime.new(2015,10,19) - 1.year),
-        value_start: 10000,
+        query_start: DateTime.new(
+          backtest_params["query_start(1i)"].to_i,
+          backtest_params["query_start(2i)"].to_i,
+          backtest_params["query_start(3i)"].to_i),
+        query_end: DateTime.new(
+          backtest_params["query_end(1i)"].to_i,
+          backtest_params["query_end(2i)"].to_i,
+          backtest_params["query_end(3i)"].to_i),
+        value_start: backtest_params[:value_start].to_i,
         dollar_cost_average: false,
         sell_signal: "p>20>50",
         buy_signal: "p<20<50",
         stocks: Stock.all
       }
+
+    Rails.logger.info "OPTIONSSSS: #{options}"
 
     calculator = Calculator::Backtests.new(options)
     answers = calculator.calculate
@@ -49,14 +55,14 @@ class BacktestsController < ApplicationController
       query_start: options[:query_start],
       query_end: options[:query_end]
     }
-    backtest = Backtest.insert_or_update(backtest_hash)
+    @backtest = Backtest.insert_or_update(backtest_hash)
     answers[:trades_array].each do |trade_hash|
-      trade_hash[:backtest_id] = backtest.id
+      trade_hash[:backtest_id] = @backtest.id
       Trade.insert_or_update(trade_hash)
     end
 
     respond_to do |format|
-      if backtest.save
+      if @backtest.save
         format.html { redirect_to @backtest, notice: 'Backtest was successfully created.' }
         format.json { render :show, status: :created, location: @backtest }
       else
@@ -66,19 +72,6 @@ class BacktestsController < ApplicationController
     end
   end
 
-  # PATCH/PUT /backtests/1
-  # PATCH/PUT /backtests/1.json
-  def update
-    respond_to do |format|
-      if @backtest.update(backtest_params)
-        format.html { redirect_to @backtest, notice: 'Backtest was successfully updated.' }
-        format.json { render :show, status: :ok, location: @backtest }
-      else
-        format.html { render :edit }
-        format.json { render json: @backtest.errors, status: :unprocessable_entity }
-      end
-    end
-  end
 
   # DELETE /backtests/1
   # DELETE /backtests/1.json
@@ -91,13 +84,11 @@ class BacktestsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
     def set_backtest
       @backtest = Backtest.find(params[:id])
     end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
     def backtest_params
-      params[:backtest]
+      params.require(:backtest).permit(:query_start, :query_end, :value_start, :dollar_cost_average, :sell_signal, :buy_signal, :stocks)
     end
 end
