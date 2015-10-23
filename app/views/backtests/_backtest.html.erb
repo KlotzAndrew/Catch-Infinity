@@ -1,0 +1,26 @@
+
+
+<div class="panel panel-success">
+  <div class="panel-heading" role="button" data-toggle="collapse" href="#collapse<%= backtest.id %>" aria-expanded="false" aria-controls="collapse<%= backtest.id %>">
+    <h3 class="panel-title">+<%= ((backtest.value_end/backtest.value_start-1)*100).round(2) %>% | <%= number_to_currency(backtest.value_start, precision: 0) %> | <%= month_difference(backtest.query_end, backtest.query_start) %></h3>
+  </div>
+  <div class="panel-body collapse" id="collapse<%= backtest.id %>">
+    <div class="row">
+      <div class="col-md-6">
+          <p>From: <%= backtest.query_start.strftime("%Y-%m-%d") if backtest.query_start %></p>
+          <p>To: <%= backtest.query_end.strftime("%Y-%m-%d") if backtest.query_end %></p>
+      </div>
+      <div class="col-md-6">
+        <p>Trades: <%= backtest.trades.count %> </p>
+        <p>Stocks: <%= backtest.stocks.count %></p>
+      </div>
+    </div>
+    <h4><u>Trades</u></h4>
+    <% backtest.trades.each do |trade| %>
+      <%= render partial: "trade", locals: { trade: trade} %>
+    <% end %>
+
+    <%= link_to 'Destroy', backtest, method: :delete, data: { confirm: 'Are you sure?' } %>
+  </div>
+</div>
+<br/>

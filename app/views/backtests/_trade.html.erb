@@ -1,0 +1,13 @@
+<div class="row">
+	<div class="col-md-12">
+		<h5>(<%= ((trade.sell_price/trade.buy_price-1)*100).round(1) %>%) <%= trade.stock.name %></h5>
+	</div>
+	<div class="col-md-6">
+		<p>Buy: <%= trade.buy_date.strftime("%Y-%m-%d")  %></p>
+		<p>Value: <%= number_to_currency(trade.buy_price*trade.quantity, precision: 0) %> (<%=number_to_currency(trade.buy_price)%>/share)</p>
+	</div>
+	<div class="col-md-6">
+		<p>Sell: <%= trade.sell_date.strftime("%Y-%m-%d")  %></p>
+		<p>Value: <%= number_to_currency(trade.sell_price*trade.quantity, precision: 0) %> (<%=number_to_currency(trade.sell_price)%>/share)</p>
+	</div>
+</div>

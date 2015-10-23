@@ -1,22 +1,19 @@
-<p id="notice"><%= notice %></p>
+<section id="backtests_index">
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <p id="notice"><%= notice %></p>
 
-<h1>Listing Backtests</h1>
+      <h1 class="backtest-header">Listing Backtests</h1>
 
-    <% @backtests.each do |backtest| %>
-        <strong> <%= backtest.value_start %> => <%= backtest.value_end%></strong>
-        <br/>
-        <%= backtest.query_end.strftime("%Y-%m-%d") if backtest.query_end %> => <%= backtest.query_start.strftime("%Y-%m-%d") if backtest.query_start %>
-      <br/>
-      <% backtest.trades.each do |trade|  %>
-        <%= trade.quantity %> | <%= trade.buy_price.to_f %> => <%= trade.sell_price.to_f %> | <%= trade.stock.name %>
-        <br/>
+      <p class="text-center"><%= link_to 'New Backtest', new_backtest_path %></p>
+
+      <% if @backtests %>
+        <% @backtests.each do |backtest| %>
+          <%= render partial: "backtest", locals: { backtest: backtest} %>
+        <% end %>
       <% end %>
-        <td><%= link_to 'Show', backtest %></td>
-        <td><%= link_to 'Destroy', backtest, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      <br/>
-    <% end %>
 
 
-<br>
-
-<%= link_to 'New Backtest', new_backtest_path %>
+    </div>
+  </div>
+</section>

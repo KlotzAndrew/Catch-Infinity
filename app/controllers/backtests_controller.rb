@@ -1,31 +1,19 @@
 class BacktestsController < ApplicationController
   before_action :set_backtest, only: [:show, :edit, :update, :destroy]
 
-  # GET /backtests
-  # GET /backtests.json
   def index
-    @backtests = Backtest.all
+    @backtests = Backtest.all.order(created_at: :desc)
   end
 
-  # GET /backtests/1
-  # GET /backtests/1.json
   def show
   end
 
-  # GET /backtests/new
   def new
     @stocks = Stock.all
     @backtest = Backtest.new
   end
 
-
-  # POST /backtests
-  # POST /backtests.json
   def create
-    Rails.logger.info "backtest_params_hurr: #{backtest_params}"
-
-    stock_ids = backtest_params["stocks"].select {|x| x unless x.empty?}
-    stocks = stock_ids.map {|x| Stock.find(x)}
     options = {
         query_start: DateTime.new(
           backtest_params["query_start(1i)"].to_i,
@@ -39,23 +27,20 @@ class BacktestsController < ApplicationController
         dollar_cost_average: false,
         sell_signal: "p>20>50",
         buy_signal: "p<20<50",
-        stocks:  stocks
+        stocks:  parse_backtest_params(backtest_params["stocks"])
       }
-
-    Rails.logger.info "OPTIONSSSS: #{options}"
 
     calculator = Calculator::Backtests.new(options)
     answers = calculator.calculate
-    options[:value_end] = answers[:value_end]
 
     backtest_hash = {
-      value_start: options[:value_start],
-      value_end: options[:value_end],
-      dollar_cost_average: options[:dollar_cost_average],
-      buy_signal: options[:buy_signal],
-      sell_signal: options[:sell_signal],
       query_start: options[:query_start],
-      query_end: options[:query_end]
+      query_end: options[:query_end],
+      value_start: options[:value_start],
+      dollar_cost_average: options[:dollar_cost_average],
+      sell_signal: options[:sell_signal],
+      buy_signal: options[:buy_signal],
+      value_end: answers[:value_end]
     }
     @backtest = Backtest.insert_or_update(backtest_hash)
     answers[:trades_array].each do |trade_hash|
@@ -65,7 +50,7 @@ class BacktestsController < ApplicationController
 
     respond_to do |format|
       if @backtest.save
-        format.html { redirect_to @backtest, notice: 'Backtest was successfully created.' }
+        format.html { redirect_to backtests_path, notice: 'Backtest was successfully created.' }
         format.json { render :show, status: :created, location: @backtest }
       else
         format.html { render :new }
@@ -74,9 +59,6 @@ class BacktestsController < ApplicationController
     end
   end
 
-
-  # DELETE /backtests/1
-  # DELETE /backtests/1.json
   def destroy
     @backtest.destroy
     respond_to do |format|
@@ -86,6 +68,11 @@ class BacktestsController < ApplicationController
   end
 
   private
+    def parse_backtest_params(stock_id_strings)
+      stock_ids = stock_id_strings.select {|x| x unless x.empty?}
+      return stock_ids.map {|x| Stock.find(x)}
+    end
+
     def set_backtest
       @backtest = Backtest.find(params[:id])
     end

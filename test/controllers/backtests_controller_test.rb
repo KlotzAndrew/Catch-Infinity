@@ -18,8 +18,6 @@ class BacktestsControllerTest < ActionController::TestCase
           "query_end(1i)" => 2014,
           "query_end(2i)" => 10,
           "query_end(3i)" => 22,
-          # query_start: DateTime.new(2015,10,19),
-          # query_end: (DateTime.new(2015,10,19) - 1.year),
           stocks: ["", "#{@google.id}", "#{@tesla.id}"],
           value_start: 10000
         }

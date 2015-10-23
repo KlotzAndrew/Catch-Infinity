@@ -11,25 +11,30 @@
     </div>
   <% end %>
 
-  <h4>From:</h4>
-  <%= date_select("backtest", "query_end", order: [:year,:month,:day], default: 1.year.ago)  %>
-  <h4>To:</h4>
-  <%= date_select("backtest", "query_start", order: [:year,:month,:day])  %>
+  <div class="row">
+    <div class="col-md-6">
+      <h4>From:</h4>
+      <%= date_select("backtest", "query_end", order: [:year,:month,:day], default: 1.year.ago)  %>
+      <h4>To:</h4>
+      <%= date_select("backtest", "query_start", order: [:year,:month,:day])  %>
 
-  <h4>Starting value</h4>
-  <%= f.text_field :value_start %>
+      <h4>Starting value:</h4>
+      <%= f.text_field :value_start %>
+    </div>
+    <div class="col-md-6">
+      <h4>Stocks to Backtest:</h4>
+      <%= f.select :stocks, @stocks.collect {|x| [x.name, x.id]}, {}, :multiple => true %>
 
-  <h4>Stocks to Backtest</h4>
+      <h4>Buy conditions:</h4>
+      p < avg_20_days < avg_50_days
 
-<%= f.select :stocks, @stocks.collect {|x| [x.name, x.id]}, {}, :multiple => true %>
+      <h4>Sell conditions:</h4>
+      p > avg_20_days > avg_50_days
 
-<h4>Buy conditions</h4>
-"p < avg_20_days < avg_50_days"
+    </div>
+  </div>
 
-<h4>Sell conditions</h4>
-"p > avg_20_days > avg_50_days"
-
-  <div class="actions">
-    <%= f.submit %>
+  <div class="actions text-center" style="margin-top: 25px;">
+    <%= f.submit class: "btn btn-primary" %>
   </div>
 <% end %>

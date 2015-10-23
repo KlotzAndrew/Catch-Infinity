@@ -1,72 +1,68 @@
-<div id="wrapper">
+<section id="stocks_index">
+    <div id="wrapper">
 
-    <!-- Sidebar -->
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav">
-            <li class="sidebar-brand">
-                <a href="#">
-                    Catch Infinity
-                </a>
-            </li>
-            
-            <% if @stocks %>
-    			<% @stocks.each do |tick, stock| %>
-    				<li><a href="#chart-<%= tick %>"><%= stock[:prices][:today_jump].to_f.round(2) if stock[:prices]%>, <%= tick %></a></li>
-    			<% end %>
-            <% end %>
-						
-        </ul>
-    </div>
-    <!-- /#sidebar-wrapper -->
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand">
+                    <a href="#">
+                        Breakout | Ticker
+                    </a>
+                </li>
+                
+                <% if @stocks %>
+        			<% @stocks.each do |tick, stock| %>
+        				<li><a href="#chart-<%= tick %>"><%= stock[:prices][:today_jump].to_f.round(2) if stock[:prices] %> | <%= tick %></a></li>
+        			<% end %>
+                <% end %>
+    						
+            </ul>
+        </div>
+        <!-- /#sidebar-wrapper -->
 
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-        <div class="container-fluid">
-            <div class="row">
-                <div class="col-lg-12">
-                	<%= render 'flash' %>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                    	<%= render 'flash' %>
 
-                        <div class="row">
-                            <div class="col-md-6">
-        						<h1 class="text-center"><a href="/">Stock Charts</a></h1>
-                            </div>
-                            <div class="col-md-6">
-                                <h1 class="text-center"><a href="/backtests">Backtests</a></h1>
-                            </div>
-                        </div>
+            				<h1 class="text-center">Breakout Charts</h1>
 
-						<div class="row text-center">
-								<div class="col-md-6 col-md-offset-3">
-									<%= render 'form' %>
-								</div>
-						</div>
 
-						<div class="row text-center" style="margin-top: 15px;">
-								<div class="col-md-6 col-md-offset-3">
-                <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Sidebar</a>
-									<%= link_to "Update Past Prices", histories_mass_update_path, :class => "btn btn-warning" %>
-									<%= link_to "Update Current Quotes", stocks_mass_update_path, :class => "btn btn-warning" %>
-								</div>
-						</div>
+    						<div class="row text-center">
+    								<div class="col-md-6 col-md-offset-3">
+    									<%= render 'form' %>
+    								</div>
+    						</div>
 
-                        <% if @stocks %>
-						<% @stocks.each do |tick, stock| %>
-						  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
-						<% end %>
-                        <% end %>
+    						<div class="row text-center" style="margin-top: 15px;">
+    								<div class="col-md-6 col-md-offset-3">
+                                     <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Sidebar</a>
+    									<%= link_to "Update Past Prices", histories_mass_update_path, :class => "btn btn-warning" %>
+    									<%= link_to "Update Current Quotes", stocks_mass_update_path, :class => "btn btn-warning" %>
+    								</div>
+    						</div>
 
+                            <% if @stocks %>
+        						<% @stocks.each do |tick, stock| %>
+        						  <%= render partial: "stock", locals: { tick: tick, stock: stock} %>
+        						<% end %>
+                            <% end %>
+
+                    </div>
                 </div>
             </div>
         </div>
+        <!-- /#page-content-wrapper -->
+
     </div>
-    <!-- /#page-content-wrapper -->
 
-</div>
-
-<!-- Menu Toggle Script -->
-<script>
-$("#menu-toggle").click(function(e) {
-    e.preventDefault();
-    $("#wrapper").toggleClass("toggled");
-});
-</script>
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+</section>
