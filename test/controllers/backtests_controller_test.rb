@@ -24,10 +24,11 @@ class BacktestsControllerTest < ActionController::TestCase
       end
     end
 
-    assert_redirected_to backtest_path(assigns(:backtest))
+    assert_redirected_to backtests_path
   end
   
   test "should get index" do
+    @backtest.update(query_end: 1.year.ago) if @backtest.query_end.nil?
     get :index
     assert_response :success
     assert_not_nil assigns(:backtests)
