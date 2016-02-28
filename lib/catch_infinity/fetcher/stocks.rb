@@ -1,7 +1,9 @@
 module Fetcher
 	class Stocks
 		attr_reader :tickers
+
 		BATCHLIMIT_QUOTES = 400
+		READ_TIMEOUT = 10
 
 		def initialize(ticker_array)
 			@tickers = ticker_array
@@ -22,7 +24,7 @@ module Fetcher
 
 		def request_and_collect_api(yahoo_tickers)
 			url = yahoo_quote_url(yahoo_tickers)
-			message = open(url, {:read_timeout=>3}).read
+			message = open(url, {:read_timeout=> READ_TIMEOUT }).read
 			parse_quote_data(message)
 		end
 
@@ -71,7 +73,7 @@ module Fetcher
 			mdy = parse_month_day_year(stock_hash)
 			hrs_mins = parse_hrs_mins(stock_hash)
 			DateTime.new(mdy[2],mdy[0],mdy[1],hrs_mins[0],hrs_mins[1])
-		end	
+		end
 
 		def parse_month_day_year(stock_hash)
 			stock_hash["LastTradeDate"].split('/').map {|x| x.to_i}
