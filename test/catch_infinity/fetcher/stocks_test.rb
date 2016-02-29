@@ -7,26 +7,27 @@ class StocksTest < ActionController::TestCase
   	@yahoo = stocks(:yahoo)
   end
 
-  test 'corrctly returns hash of quotes' do
-    # yahoo API uses differnt format for single ticker 
-    VCR.use_cassette("yahoo_finance") do
-    	fetcher = Fetcher::Stocks.new([@google.ticker, @yahoo.ticker])
-    	assert_equal fetcher.fetch, [
-			{
+  test 'correctly returns hash of quotes' do
+    mock_stocks_reponse = [
+      {
         ticker: "GOOG",
-				name: "Google Inc.",
-				last_price:  BigDecimal.new("646.67"),
-				last_trade: DateTime.new(2015,10,12,16,00),
-				stock_exchange: "NMS" 
-			},
+        name: "Alphabet Inc.",
+        last_price:  BigDecimal.new("705.07"),
+        last_trade: DateTime.new(2016,2,26,16,00),
+        stock_exchange: "NMS"
+      },
       {
         ticker: "YHOO",
         name: "Yahoo! Inc.",
-        last_price: BigDecimal.new("32.86"),
-        last_trade: DateTime.new(2015,10,12,16,00),
-        stock_exchange: "NMS" 
+        last_price: BigDecimal.new("31.37"),
+        last_trade: DateTime.new(2016,2,26,16,00),
+        stock_exchange: "NMS"
       }
-		]
+    ]
+
+    VCR.use_cassette("yahoo_finance") do
+    	fetcher = Fetcher::Stocks.new([@google.ticker, @yahoo.ticker])
+    	assert_equal mock_stocks_reponse, fetcher.fetch
     end
   end
 end
