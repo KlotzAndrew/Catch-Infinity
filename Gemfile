@@ -11,12 +11,12 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
-gem "chartkick"
+gem 'chartkick'
 gem 'puma'
 
 group :development, :test do
-	gem 'pry'
-	gem 'pry-rails'
+  gem 'pry'
+  gem 'pry-rails'
   gem 'sqlite3'
   gem 'byebug'
   gem 'web-console', '~> 2.0'
@@ -26,15 +26,15 @@ group :development, :test do
 end
 
 group :production do
-	gem 'pg'
-	gem 'rails_12factor'
+  gem 'pg'
+  gem 'rails_12factor'
 end
 
 group :test do
-	gem 'minitest-reporters', '1.0.5'
-	gem 'guard-minitest', '2.3.1'
-	gem 'mini_backtrace', '0.1.3'
-	gem 'webmock', '1.21.0'
-	gem 'vcr', '~> 2.9.3'
+  gem 'minitest-reporters', '1.0.5'
+  gem 'guard-minitest', '2.3.1'
+  gem 'mini_backtrace', '0.1.3'
+  gem 'webmock', '1.21.0'
+  gem 'vcr', '~> 2.9.3'
   gem 'mocha', '~> 1.1.0'
 end
